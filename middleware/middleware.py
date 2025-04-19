@@ -1,7 +1,7 @@
 # TODO : add middleware for user auth on all routes except login and signup. also add encryption for passwords and
 
 
-def validate_password(password):
+def validate_password(password: str) -> bool:
     """
     _summary_
 
@@ -14,7 +14,7 @@ def validate_password(password):
     return True
 
 
-def validate_username(username):
+def validate_username(username: str) -> bool:
     """
     _summary_
 
@@ -24,4 +24,4 @@ def validate_username(username):
     Returns:
         boolean: describes whether the username fits the requirements and is safe to use in queries
     """
-    return True
+    return username.isalnum()

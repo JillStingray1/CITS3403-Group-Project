@@ -10,4 +10,10 @@ class TestValidation(unittest.TestCase):
 
     def test_username_validation(self):
         self.assertEqual(middleware.validate_username("abcd8"), True)
+        self.assertEqual(middleware.validate_username("Jill_Stingray"), True)
+        self.assertEqual(middleware.validate_username("ACcd.8"), False)
+        self.assertEqual(middleware.validate_username("ACcd?8"), False)
+        self.assertEqual(middleware.validate_username("ACcd!8"), False)
+        self.assertEqual(middleware.validate_username("ACcd.8"), False)
+
         self.assertEqual(middleware.validate_username("; drop table *;"), False)
