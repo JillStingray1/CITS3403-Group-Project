@@ -10,4 +10,4 @@ class User(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(120), nullable=False)
-    meetings: Mapped[list["Meeting"]] = relationship(secondary=association_table, back_populates="users")
+    meetings: Mapped[list["meeting"]] = relationship(secondary=association_table, back_populates="users")
