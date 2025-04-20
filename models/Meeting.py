@@ -20,7 +20,8 @@ class Timeslot(db.Model):
     
     # Number of users who have marked this slot as unavailable.
     # 0 = available. Each additional user increments this by 1.
-    selected: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+   # Actual column in the DB is 'selected', but internally accessed via '_selected'
+    _selected: Mapped[int] = mapped_column("selected", Integer, nullable=False, default=0)
 
     # Foreign key to the associated meeting
     meeting_id: Mapped[int] = mapped_column(ForeignKey("meeting.id"), nullable=False)
