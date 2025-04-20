@@ -26,6 +26,8 @@ def validate_username(username: str) -> bool:
     Returns:
         boolean: describes whether the username fits the requirements and is safe to use in queries
     """
+    if len(username) < 3:
+        return False
     san_username = re.search("[A-Za-z0-9_]+", username)
     if san_username:
         return san_username.group() == username
