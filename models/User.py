@@ -1,6 +1,7 @@
 from sqlalchemy import Integer, String, ForeignKey, Column, Table
 from sqlalchemy.orm import Mapped, mapped_column, relationship, DeclarativeBase
-from extensions import db, Base, association_table
+from extensions import db, Base
+from models.Association import association_table
 
 
 class User(db.Model):

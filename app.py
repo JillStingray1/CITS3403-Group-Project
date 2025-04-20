@@ -8,7 +8,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 db.init_app(app)
 
 # Import after app is defined
-import models.Models
+import models.models
 import routes.routes  # this will import routes.py, which imports user and meeting
 
 # after the models are imported, create the database tables

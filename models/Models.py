@@ -1,4 +1,6 @@
 
+from models.User import User
+from models.Meeting import Meeting
+from models.Association import association_table
 
-import models.Meeting
-import models.User
+print("models file imported")
