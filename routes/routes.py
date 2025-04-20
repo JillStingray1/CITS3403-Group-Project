@@ -1,4 +1,4 @@
 # this file is used to combine all the main routes for the application
 
-import userRoutes
-import meetingRoutes
+import routes.user_routes as user_routes
+import routes.meeting_routes as meeting_routes
