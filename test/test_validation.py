@@ -1,5 +1,5 @@
 import unittest
-from server import tools
+import tools
 
 
 class TestValidation(unittest.TestCase):
