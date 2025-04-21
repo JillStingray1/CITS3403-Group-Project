@@ -1,0 +1,54 @@
+/* common.css — shared by all pages */
+
+/* Reset & box‑sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Base typography & layout */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #F7F4D3; /* pale yellow */
+  color: #000;
+}
+
+/* Shared buttons */
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: none;
+}
+
+.btn-primary {
+  background-color: #4f46e5; /* default primary (sign‑up) */
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px 16px;
+}
+
+.btn-primary:hover {
+  background-color: #4338ca;
+}
+
+/* Headings */
+h1, h2 {
+  margin-bottom: 1rem;
+}
+
+/* Form inputs */
+input, select, textarea, button {
+  font-family: inherit;
+}
+
+/* Utility: centred container */
+.container-centred {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1200px;
+}
