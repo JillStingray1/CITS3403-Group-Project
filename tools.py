@@ -1,5 +1,6 @@
 from re import search
-
+from models.Models import User
+from flask import session
 
 def validate_password(password: str) -> bool:
     """
@@ -37,3 +38,27 @@ def validate_username(username: str) -> bool:
     if san_username:
         return san_username.group() == username
     return False
+
+def save_login_session(user: User):
+    """
+    Saves the user login session state (different to ORM session).
+    Args:
+        user (User): The user object to save the session for.
+    """
+    session['user_id'] = user.id
+    session['username'] = user.username
+    session['logged_in'] = True
+    return
+
+def clear_login_session():
+    """
+    Clears the user login session state.
+    """
+    if 'user_id' not in session:
+        return
+    
+    session.pop('user_id', None)
+    session.pop('username', None)
+    session.pop('logged_in', None)
+    
+    return

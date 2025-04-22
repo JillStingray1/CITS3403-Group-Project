@@ -2,7 +2,7 @@ from flask import Flask, session, request, jsonify, redirect, url_for
 from app import app, db
 from models.Models import User, Meeting, Timeslot
 import bcrypt
-from tools import validate_username, validate_password
+from tools import validate_username, validate_password, save_login_session, clear_login_session
 from middleware.middleware import secure
 
 # TODO: add authentication to the routes that require a user to be logged in. fill in the pass statements with the appropriate code. upon login, pass the user id to the session.
@@ -32,15 +32,13 @@ def create_user():
         db.session.add(new_user)
         db.session.commit()
 
-        session['user_id'] = new_user.id
-        session['username'] = new_user.username
-        session['logged_in'] = True
+        save_login_session(new_user)
         # setting the session variables to the current user
         
         return redirect(url_for('static', filename='main-menu.html')) # redirect to the main menu page after signup
 
 @app.route('/user/login', methods=['POST'])
-#this route will be used to login a user
+#this route will be used to login a user.  expects json as { username: 'username', password: 'password'}
 def login_user():
     data = request.get_json()
     username = data.get('username')
@@ -50,10 +48,8 @@ def login_user():
     else: 
         password = data.get('password')
         if bcrypt.checkpw(password.encode('utf-8'), is_user.password_hash.encode('utf-8')):
-
-            session['user_id'] = is_user.id
-            session['username'] = is_user.username
-            session['logged_in'] = True
+        
+            save_login_session(is_user)
 
             return redirect(url_for('static', filename='main-menu.html')) # redirect to the main menu page after successful login
         else:
@@ -64,5 +60,7 @@ def login_user():
 @secure
 #this route will be used to logout a user       
 def logout_user():
-    pass
+
+   
+    
 
