@@ -1,0 +1,61 @@
+/* signup.css — only for sign‑up.html */
+
+body.signup-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.signup-container {
+  background-color: #EDEBC7;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+/* ← New rule to center the heading */
+.signup-container h2 {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+/* Override common .btn-primary color for this page */
+.btn-primary {
+  background-color: #4f46e5;
+}
+
+.btn-primary:hover {
+  background-color: #4338ca;
+}
+
+p {
+  text-align: center;
+  margin-top: 16px;
+}
+
+a {
+  color: #4f46e5;
+}
+
+a:hover {
+  text-decoration: underline;
+}
