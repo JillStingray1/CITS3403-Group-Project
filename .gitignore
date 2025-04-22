@@ -1,2 +1,4 @@
 __pycache__/
+# Ignore virtual environments created for ease of development
+.venv
 app.db
