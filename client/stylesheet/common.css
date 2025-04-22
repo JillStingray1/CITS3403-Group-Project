@@ -1,0 +1,45 @@
+/* common.css — shared by all pages */
+
+/* Reset & box‑sizing */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Base typography & layout */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #F7F4D3; /* pale yellow */
+    color: #000;
+  }
+  
+  /* Shared button styles */
+  .btn {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border: none;
+    border-radius: 8px;
+  }
+  
+  .btn-primary {
+    background-color: #4f46e5; /* default primary */
+    color: #fff;
+    padding: 10px 16px;
+  }
+  
+  .btn-primary:hover {
+    background-color: #4338ca;
+  }
+  
+  /* Utility: centred wrapper */
+  .container-centred {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
