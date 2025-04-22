@@ -1,14 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Main Menu</title>
+  <!-- shared resets & utilities -->
+  <link rel="stylesheet" href="stylesheet/common.css" />
+  <!-- this page’s styles -->
+  <link rel="stylesheet" href="stylesheet/mainmenu.css" />
 </head>
-
 <body>
+  <div class="main-menu-wrapper">
+    <h1 class="page-title">Main Menu</h1>
+    <div class="main-menu-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <h2>Activities</h2>
+        <ul>
+          <li>General</li>
+          <li>Work</li>
+          <li>School</li>
+          <li>Urgent</li>
+          <li>Team building</li>
+          <li>Legend</li>
+        </ul>
+      </aside>
 
+      <!-- Form area -->
+      <section class="content">
+        <h2>Form Creation</h2>
+        <form>
+          <label for="activity-name">Activity Name</label>
+          <input type="text" id="activity-name" placeholder="Enter name" required />
+
+          <label for="activity-length">Length of Activity</label>
+          <input type="text" id="activity-length" placeholder="e.g. 60 minutes" required />
+
+          <label>Date Range</label>
+          <div class="date-range">
+            <input type="date" value="2024-04-24" required />
+            <span class="dash">–</span>
+            <input type="date" value="2024-04-30" required />
+          </div>
+
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+      </section>
+    </div>
+  </div>
 </body>
-
 </html>

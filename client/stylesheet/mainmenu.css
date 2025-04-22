@@ -1,0 +1,98 @@
+/* mainmenu.css — only for main-menu.html */
+
+/* 1) A centered wrapper for title + card */
+.main-menu-wrapper {
+    margin: 40px auto 60px;
+    width: 90%;
+    max-width: 1200px;
+  }
+  
+  /* 2) Page title above the card */
+  .page-title {
+    margin-bottom: 24px;
+    font-size: 2.5rem;
+    font-weight: 600;
+    text-align: left;
+    color: #000;
+  }
+  
+  /* 3) The white card holding sidebar + form */
+  .main-menu-container {
+    display: flex;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  
+  /* ─── Sidebar ───────────────────────────────────────────────────────────── */
+  .sidebar {
+    width: 25%;
+    border-right: 1px solid #eee;
+    padding: 24px;
+  }
+  
+  .sidebar h2 {
+    font-style: italic;
+    margin-bottom: 16px;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+  }
+  
+  .sidebar li {
+    padding: 8px 0;
+    cursor: pointer;
+  }
+  
+  .sidebar li + li {
+    border-top: 1px solid #f0f0f0;
+  }
+  
+  .sidebar li:hover {
+    background-color: #f7f7f7;
+  }
+  
+  /* ─── Content / Form ─────────────────────────────────────────────────────── */
+  .content {
+    flex: 1;
+    padding: 32px 40px;
+  }
+  
+  .content h2 {
+    margin-bottom: 24px;
+  }
+  
+  .content label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .content input[type="text"],
+  .content input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 24px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  .date-range {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+  
+  .date-range .dash {
+    margin: 0 4px;
+    font-size: 1.2rem;
+  }
+  
+  .btn-primary {
+    float: right;
+  }
+  
