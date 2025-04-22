@@ -3,47 +3,27 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 from extensions import db
 from models.Association import association_table
 
-timeslot_length = [5, 10, 15, 20, 30, 60, 90, 120, 300] # in minutes
+timeslot_length = [15, 30, 45, 60, 90, 120, 300] # in minutes
 
 class Timeslot(db.Model):
     """
     Represents a single selectable time slot for a meeting.
 
-    Each timeslot is tied to a specific date and slot number (e.g., a division of the day).
+    Each timeslot is tied to a specific meeting (e.g., a division of the day).
     The `selected` field tracks how many users have marked this slot as unavailable.
     """
     __tablename__ = 'timeslot'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    date: Mapped[Date] = mapped_column(Date, nullable=False)
-    slot: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    order: Mapped[int] = mapped_column(Integer, nullable=False)
     
-    # Number of users who have marked this slot as unavailable.
-    # 0 = available. Each additional user increments this by 1.
-   # Actual column in the DB is 'selected', but internally accessed via '_selected'
-    _selected: Mapped[int] = mapped_column("selected", Integer, nullable=False, default=0)
+    unavailable_users: Mapped[list['user']] = relationship()
 
     # Foreign key to the associated meeting
     meeting_id: Mapped[int] = mapped_column(ForeignKey("meeting.id"), nullable=False)
 
-    def increment(self):
-        """Increment the selected value by 1"""
-        step = 1
-        self._selected += step
 
-    def decrement(self):
-        """Decrement the selected value by 1"""
-        step = 1
-        self._selected -= step
-
-    @property
-    def selected(self):
-        """Read-only access to selected."""
-        return self._selected
-
-    @selected.setter
-    def selected(self, value):
-        raise AttributeError("Direct modification of 'selected' is not allowed. Use increment() or decrement().")
 
 class Meeting(db.Model):
     """
