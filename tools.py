@@ -1,6 +1,9 @@
 from re import search
 from models.Models import User
 from flask import session
+import random
+import string
+    
 
 def validate_password(password: str) -> bool:
     """
@@ -62,3 +65,13 @@ def clear_login_session():
     session.pop('logged_in', None)
     
     return
+
+def generate_share_code() -> str:
+    """
+    Generates a random share code for a meeting.
+    The code is a 6-character alphanumeric string.
+    """
+    characters = string.ascii_letters + string.digits
+    share_code = ''.join(random.choice(characters) for _ in range(6))
+    
+    return share_code

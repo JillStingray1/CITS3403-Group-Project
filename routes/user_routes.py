@@ -21,7 +21,7 @@ def create_user():
 
     Returns:
         On success, redurects to the main menu page and adds user to session.
-        On failure, returns a JSON object with an error message.
+        On failure, returns a JSON object with an error message and 400.
 
     """
     data = request.get_json()
@@ -56,7 +56,7 @@ def login_user():
 
     Returns:
         On success, redurects to the main menu page adds user to session.
-        On failure, returns a JSON object with an error message.
+        On failure, returns a JSON object with an error message and 400.
     """
     data = request.get_json()
     username = data.get('username')
