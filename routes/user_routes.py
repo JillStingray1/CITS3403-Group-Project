@@ -1,5 +1,7 @@
 from flask import Flask, session
-from app import app
+from app import app, db
+from models.Models import User, Meeting, Timeslot
+import bcrypt
 
 # TODO: add authentication to the routes that require a user to be logged in. fill in the pass statements with the appropriate code. upon login, pass the user id to the session.
 
