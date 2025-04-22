@@ -2,6 +2,7 @@ from sqlalchemy import Integer, String, ForeignKey, Date
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 from extensions import db
 from models.Association import association_table
+from models.User_timeslot import User_timeslot_association
 
 timeslot_length = [15, 30, 45, 60, 90, 120, 300] # in minutes
 
@@ -18,7 +19,9 @@ class Timeslot(db.Model):
 
     order: Mapped[int] = mapped_column(Integer, nullable=False)
     
-    unavailable_users: Mapped[list['user']] = relationship()
+    unavailable_users: Mapped[list['User']] = relationship("User",
+        secondary=User_timeslot_association,
+        backref="users")
 
     # Foreign key to the associated meeting
     meeting_id: Mapped[int] = mapped_column(ForeignKey("meeting.id"), nullable=False)
@@ -39,8 +42,9 @@ class Meeting(db.Model):
     end_date: Mapped[Date] = mapped_column(Date, nullable=False)
     
     # Users linked to the meeting (many-to-many)
-    users: Mapped[list["user"]] = relationship(
-        secondary=association_table, back_populates="meetings"
+    users: Mapped[list["User"]] = relationship("User",
+        secondary=association_table,
+        back_populates="meetings"
     )
     meeting_length: Mapped[int] = mapped_column(Integer, nullable=False)
     meeting_name: Mapped[str] = mapped_column(String(80), nullable=False)
@@ -50,7 +54,7 @@ class Meeting(db.Model):
     share_code: Mapped[str] = mapped_column(String(80), nullable=False)
 
     # List of all timeslots associated with this meeting
-    timeslots: Mapped[list["timeslot"]] = relationship()
+    timeslots: Mapped[list["Timeslot"]] = relationship()
 
     def __init__(self, start_date, end_date, **kwargs):
         """

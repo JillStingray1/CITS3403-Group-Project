@@ -21,7 +21,7 @@ class User(db.Model):
     password_hash: Mapped[str] = mapped_column(String(120), nullable=False)
 
     # Meetings this user is part of (many-to-many via association table)
-    meetings: Mapped[list["meeting"]] = relationship(
+    meetings: Mapped[list["Meeting"]] = relationship("Meeting",
         secondary=association_table,
         back_populates="users"
     )
