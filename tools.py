@@ -70,6 +70,8 @@ def generate_share_code() -> str:
     """
     Generates a random share code for a meeting.
     The code is a 6-character alphanumeric string.
+    Returns:
+        str: The generated share code
     """
     characters = string.ascii_letters + string.digits
     share_code = ''.join(random.choice(characters) for _ in range(6))
