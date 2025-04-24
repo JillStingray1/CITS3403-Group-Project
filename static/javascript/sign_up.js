@@ -14,13 +14,10 @@ function create_user() {
     let username_validity = is_username_valid(username)
     let password_validity = is_password_valid(password)
     let matched_passwords = password_matching(password, confirm_password)
-    alert(password_validity)
-    alert(username_validity)
-    alert(matched_passwords)
     if (!username_validity || !password_validity || !matched_passwords) {
         return false
     }
-    post_user(password, username)
+    post_user(username, password)
 }
 
 /**
@@ -90,22 +87,46 @@ function password_matching(password, confirm_password) {
  * Posts valid username and passwords to "/user/signup" where a new user is
  * created in the database. If it fails due to duplicate usernames, or
  * other reasons, then display the error in the warning box.
+ * 
+ * if the signup is sucessful, then redirect the user to the url from the get 
+ * response
  *
- * @param {string} username 
- * @param {string} password 
+ * @param {string} username Valid username from form
+ * @param {string} password Valid password from from
  */
-function post_user(username, password) {
+async function post_user(username, password) {
     let sign_up_url ="/user/signup";
-    
     fetch(sign_up_url, {
         "method": "POST",
+        "headers" : {
+            "Content-type": "application/json",
+            "Accept" : "application/json"
+            },
         "body": JSON.stringify({
             username,
             password,
-        })
-    }).then()
+        }),
+    }).then(response => {
+        if (response.ok) {
+            // redirects if the websit is ok
+            window.location.replace(response.url)
+            return response.text()
+        } else if (response.status == 400) {
+            // gets the error if there is a validation issue, or if username
+            // duplicate
+            console.log(
+                response.json().then(response_json => {
+                    document.getElementById("confirm_warning").textContent
+                        = response_json.error
+                })
+            )
+        } else {
+            // other errors get handled here
+            document.getElementById("confirm_warning").textContent
+                = response.statusText
+        }
+    })
 }
-
 
 // prevents the default behavior of submitting the form when all fields filed
 window.onload = function ()  {
