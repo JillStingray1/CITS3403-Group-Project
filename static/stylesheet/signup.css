@@ -59,3 +59,8 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+
+.warning {
+  color: red;
+}

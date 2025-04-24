@@ -24,8 +24,9 @@
 
       <label for="confirmPassword">Confirm Password</label>
       <input type="password" id="confirm_password" name="confirm_password" minlength="5" required>
+      <p class="warning" id="warning"></p>
 
-      <button type="submit" class="btn btn-primary">Sign Up</button>
+      <button type="submit" class="btn btn-primary" onclick="return create_user()">Sign Up</button>
     </form>
     <p>Already have an account? <a href="login.html">Log in here</a></p>
   </div>
