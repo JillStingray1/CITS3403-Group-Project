@@ -99,10 +99,10 @@ function post_user(username, password) {
     
     fetch(sign_up_url, {
         "method": "POST",
-        "body": {
-            "username" : username,
-            "password" : password,
-        }
+        "body": JSON.stringify({
+            username,
+            password,
+        })
     }).then()
 }
 
