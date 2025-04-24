@@ -94,7 +94,7 @@ function password_matching(password, confirm_password) {
  * @param {string} username Valid username from form
  * @param {string} password Valid password from from
  */
-async function post_user(username, password) {
+function post_user(username, password) {
     let sign_up_url ="/user/signup";
     fetch(sign_up_url, {
         "method": "POST",
