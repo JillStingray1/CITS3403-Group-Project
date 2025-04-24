@@ -17,16 +17,22 @@
     <h2>Sign Up</h2>
     <form id="signup">
       <label for="Username">Username</label>
-      <input type="text" id="username" name="username" required>
+      <input type="text" id="username" name="username" 
+      minlength="3" maxlength="25" 
+      required>
+      <p class="warning" id="username_warning"></p>
 
       <label for="password">Password</label>
-      <input type="password" id="password" name="password" minlength="5" required>
+      <input type="password" id="password" name="password" 
+      minlength="5" maxlength="35" 
+      required>
+      <p class="warning" id="password_warning"></p>
 
       <label for="confirmPassword">Confirm Password</label>
       <input type="password" id="confirm_password" name="confirm_password" minlength="5" required>
-      <p class="warning" id="warning"></p>
+      <p class="warning" id="confirm_warning"></p>
 
-      <button type="submit" class="btn btn-primary" onclick="return create_user()">Sign Up</button>
+      <button type="submit" class="btn btn-primary">Sign Up</button>
     </form>
     <p>Already have an account? <a href="login.html">Log in here</a></p>
   </div>

@@ -33,7 +33,6 @@ label {
 input {
   width: 100%;
   padding: 10px;
-  margin-bottom: 16px;
   border: 1px solid #ccc;
   border-radius: 8px;
 }
@@ -63,4 +62,6 @@ a:hover {
 
 .warning {
   color: red;
+  text-align: left;
+  font-size: 10px;
 }
