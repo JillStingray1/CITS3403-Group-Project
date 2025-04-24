@@ -8,13 +8,19 @@
 function create_user() {
     let username = document.forms["signup"]["username"].value
     let password = document.forms["signup"]["password"].value
-    
     let confirm_password = document.forms["signup"]["confirm_password"].value
+
+    // Calls validation functions
     let username_validity = is_username_valid(username)
     let password_validity = is_password_valid(password)
-    if (username_validity && password_validity) {
-        return false;
+    let matched_passwords = password_matching(password, confirm_password)
+    alert(password_validity)
+    alert(username_validity)
+    alert(matched_passwords)
+    if (!username_validity || !password_validity || !matched_passwords) {
+        return false
     }
+    post_user(password, username)
 }
 
 /**
@@ -62,6 +68,14 @@ function is_password_valid(password) {
 
 }
 
+
+/**
+ * Validates user inputed passwords, Password must only contain alphanumeric 
+ * characters and the following special characters !#+:=.?
+ * 
+ * @param {string} password the password string from user input
+ * @returns boolean that verifies user input
+ */
 function password_matching(password, confirm_password) {
     if (password != confirm_password) {
         document.getElementById("confirm_warning").textContent 
@@ -71,10 +85,29 @@ function password_matching(password, confirm_password) {
     return true
 }
 
+
+/**
+ * Posts valid username and passwords to "/user/signup" where a new user is
+ * created in the database. If it fails due to duplicate usernames, or
+ * other reasons, then display the error in the warning box.
+ *
+ * @param {string} username 
+ * @param {string} password 
+ */
 function post_user(username, password) {
-    fetch()
+    let sign_up_url ="/user/signup";
+    
+    fetch(sign_up_url, {
+        "method": "POST",
+        "body": {
+            "username" : username,
+            "password" : password,
+        }
+    }).then()
 }
 
+
+// prevents the default behavior of submitting the form when all fields filed
 window.onload = function ()  {
     let signup_form = document.getElementById("signup")
     signup_form.addEventListener('submit', event => {
