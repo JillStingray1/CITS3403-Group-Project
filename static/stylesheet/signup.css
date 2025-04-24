@@ -60,8 +60,22 @@ a:hover {
 }
 
 
+
 .warning {
   color: red;
   text-align: left;
   font-size: 10px;
+}
+
+.back-link {
+  display: block;
+  margin-top: 12px;
+  text-align: center;
+  color: #777;
+  font-size: 0.9em;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+  color: #4f46e5;
 }
