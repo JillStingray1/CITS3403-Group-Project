@@ -32,7 +32,7 @@ def init_user_routes(app, db, bcrypt):
             JSON { username: 'username', password: 'password'}
 
         Returns:
-            On success, redurects to the main menu page and adds user to session.
+            On success, redirects to the main menu page and adds user to session.
             On failure, returns a JSON object with an error message and 400.
 
         """
@@ -67,7 +67,7 @@ def init_user_routes(app, db, bcrypt):
             JSON { username: 'username', password: 'password'}
 
         Returns:
-            On success, redurects to the main menu page adds user to session.
+            On success, redirects to the main menu page adds user to session.
             On failure, returns a JSON object with an error message and 400.
         """
         if 'logged_in' in session and session['logged_in']:

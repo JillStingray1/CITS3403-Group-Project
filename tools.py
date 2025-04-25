@@ -76,6 +76,6 @@ def generate_share_code() -> str:
         str: The generated share code
     """
     characters = string.ascii_letters + string.digits
-    share_code = ''.join(random.choice(characters) for _ in range(6))
+    share_code = ''.join(random.choice(characters) for _ in range(16))
     
     return share_code

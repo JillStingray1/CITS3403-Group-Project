@@ -4,6 +4,20 @@ from tools import validate_username, validate_password, save_login_session, clea
 from middleware.middleware import secure
 from datetime import date, datetime
 
+def get_timeslots(Meeting):
+
+    timeslots = Meeting.timeslots
+    timeslot_list = []
+
+    for timeslot in timeslots:
+        timeslot_list.append({
+            "id": timeslot.id,
+            "order": timeslot.order,
+            "unavailable_users": [user.username for user in timeslot.unavailable_users]
+        })
+    return timeslot_list
+    
+
 
 def init_meeting_routes(app, db):
     @app.route('/meeting', methods=['POST'])
@@ -78,15 +92,8 @@ def init_meeting_routes(app, db):
         meeting = Meeting.query.get(session['meeting_id'])
         if not meeting:
             return jsonify({"error": "Meeting not found"}), 404
-        timeslots = meeting.timeslots
-        timeslot_list = []
-
-        for timeslot in timeslots:
-            timeslot_list.append({
-                "id": timeslot.id,
-                "order": timeslot.order,
-                "unavailable_users": [user.username for user in timeslot.unavailable_users]
-            })
+        
+        timeslot_list = get_timeslots(meeting)
 
         return jsonify({
             "id": meeting.id,
@@ -99,6 +106,7 @@ def init_meeting_routes(app, db):
             "timeslots": timeslot_list
         }), 200
     
+ 
     @app.route('/meeting/<int:meeting_id>', methods=['GET'])
     @secure 
     def get_meeting(meeting_id):
@@ -109,6 +117,8 @@ def init_meeting_routes(app, db):
         if not meeting:
             return jsonify({"error": "Meeting not found"}), 404
         
+        timeslot_list = get_timeslots(meeting)
+
         return jsonify({
             "id": meeting.id,
             "start_date": meeting.start_date,
@@ -116,5 +126,35 @@ def init_meeting_routes(app, db):
             "meeting_length": meeting.meeting_length,
             "meeting_name": meeting.meeting_name,
             "meeting_description": meeting.meeting_description,
-            "share_code": meeting.share_code
+            "share_code": meeting.share_code,
+            "timeslots": timeslot_list
         }), 200
+    
+    @app.route('/meeting/timeslot', methods=['POST'])
+    @secure
+    def add_to_timeslot():
+        """
+        Add a user to a timeslot. Expects JSON as { timeslots: [{timeslot_id: int}] }
+        """
+        data = request.get_json()
+        
+        user = User.query.get(session['user_id'])
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+        
+        meeting = Meeting.query.get(session['meeting_id'])
+        if user not in meeting.users:
+            return jsonify({"error": "User not part of the meeting"}), 403
+        
+        timeslot_entries = data.get("timeslots", [])
+
+        for entry in timeslot_entries:
+            timeslot_id = entry.get("timeslot_id")
+            timeslot = Timeslot.query.get(timeslot_id)
+    
+            if not timeslot:
+                return jsonify({"error": f"Timeslot with ID {timeslot_id} not found"}), 404
+
+            timeslot.unavailable_users.append(user)
+        db.session.commit()
+        return jsonify({"message": "User added to timeslot"}), 200
