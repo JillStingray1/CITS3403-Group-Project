@@ -1,9 +1,13 @@
 from flask import Flask, redirect, url_for
 from extensions import db
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+app.config['SECRET_KEY'] = os.getenv('SESSION_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_URI')
 
 db.init_app(app)
 
