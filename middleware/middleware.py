@@ -11,3 +11,4 @@ def secure(f):
         if 'logged_in' not in session or not session['logged_in']:
             return redirect(url_for('static', filename='index.html'))
         return f(*args, **kwargs)
+    return check_login

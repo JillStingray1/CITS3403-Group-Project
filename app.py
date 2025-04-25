@@ -13,15 +13,18 @@ db.init_app(app)
 
 # Import after app is defined
 import models.Models
-import routes.routes  # this will import routes.py, which imports user and meeting
 
 # after the models are imported, create the database tables
 with app.app_context():
     db.create_all()
 
+
 @app.route('/')
 def index():
     return redirect(url_for('static', filename='index.html'))
+
+from routes import user_routes, meeting_routes
+user_routes.init_user_routes(app, db)
 
 if __name__ == "__main__":
     app.run(debug=True)

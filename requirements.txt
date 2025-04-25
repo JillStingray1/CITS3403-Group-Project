@@ -2,4 +2,4 @@ flask
 flask_sqlalchemy
 jinja2
 bcrypt
-env
+dotenv
