@@ -4,6 +4,8 @@ from tools import validate_username, validate_password, save_login_session, clea
 from middleware.middleware import secure
 from datetime import date, datetime
 
+    #TODO: add a migration to add a new column to the meeting table to store the current most effective timeslot. this should be calculated each time a timeslot is added or removed. change the add_to_timeslot function to update this column. 
+    
 def get_timeslots(Meeting):
 
     timeslots = Meeting.timeslots
@@ -158,3 +160,4 @@ def init_meeting_routes(app, db):
             timeslot.unavailable_users.append(user)
         db.session.commit()
         return jsonify({"message": "User added to timeslot"}), 200
+    
