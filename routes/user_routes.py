@@ -36,7 +36,6 @@ def init_user_routes(app, db, bcrypt):
             On failure, returns a JSON object with an error message and 400.
 
         """
-        print("Creating user")
         data = request.get_json()
         username = data.get('username')
         is_username_valid = User.query.filter(User.username == username).first()
@@ -85,7 +84,7 @@ def init_user_routes(app, db, bcrypt):
             
                 save_login_session(is_user)
 
-                return redirect(url_for('static', filename='main-menu.html')) # redirect to the main menu page after successful login
+                return redirect(url_for('static', filename='main-menu.html')), 200 # redirect to the main menu page after successful login
             else:
                 return jsonify({"error": "Invalid password"}), 400
 

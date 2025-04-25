@@ -65,7 +65,7 @@ class Meeting(db.Model):
         super().__init__(start_date=start_date, end_date=end_date, **kwargs)
 
     @validates("meeting_length")
-    def validate_meeting_length(self, value):
+    def validate_meeting_length(self, key, value):
         """
         Validates that the meeting length is one of the allowed slot lengths.
         `timeslot_length` is assumed to be a predefined list of valid durations.

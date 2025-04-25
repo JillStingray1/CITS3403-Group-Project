@@ -27,6 +27,7 @@ def index():
 
 from routes import user_routes, meeting_routes
 user_routes.init_user_routes(app, db, bcrypt)
+meeting_routes.init_meeting_routes(app, db)
 
 if __name__ == "__main__":
     app.run(debug=True)

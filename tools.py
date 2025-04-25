@@ -64,6 +64,7 @@ def clear_login_session():
     session.pop('user_id', None)
     session.pop('username', None)
     session.pop('logged_in', None)
+    session.pop('meeting_id', None)  # Clear meeting_id from session
     
     return
 
