@@ -13,17 +13,41 @@
   <!-- ─── Navbar / Task Bar ──────────────────────────────────────────── -->
   <header class="navbar">
     <div class="nav-container">
-      <!-- wrap the logo in a link -->
       <a href="index.html" class="logo-link">
         <img src="images/app-logo/app-logo.png" alt="App Logo" class="logo-nav" />
       </a>
+  
       <div class="nav-buttons">
-        <button class="btn btn-primary" id="open-calendar">📅 Select Date</button>
+        <!-- ─── Share-code dropdown ───────────────────── -->
+        <div class="share-dropdown">
+          <button class="btn btn-primary dropdown-trigger">Use Share Code</button>
+  
+          <div class="share-menu">
+            <div class="share-menu-header">
+              <span>Have a code?</span>
+              <button class="share-close" aria-label="Close">×</button>
+            </div>
+            <p>Enter the share code to import a shared activity:</p>
+            <form action="activity.html" method="get" class="share-form">
+              <input
+                type="text"
+                name="code"
+                class="share-code-input"
+                placeholder="ABC123"
+                required
+              />
+              <button type="submit" class="btn btn-primary import-btn">
+                Import
+              </button>
+            </form>
+          </div>
+        </div>
+  
         <button class="btn btn-primary" id="new-activity">+ New Activity</button>
       </div>
     </div>
   </header>
-
+  
   <div class="main-menu-wrapper">
     <h1 class="page-title">Main Menu</h1>
 
