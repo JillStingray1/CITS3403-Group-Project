@@ -35,6 +35,7 @@ def init_meeting_routes(app, db):
         
         db.session.add(new_meeting)
         db.session.commit()
+        new_meeting.users.append(User.query.get(session['user_id']))
 
 
         amount_days = (parsed_end_date - parsed_start_date).days + 1
@@ -43,5 +44,77 @@ def init_meeting_routes(app, db):
             db.session.add(new_timeslot)
             db.session.commit()
         
+        session['meeting_id'] = new_meeting.id
         return redirect(url_for('static', filename='date-selector.html')), 200
     
+    @app.route('/meeting/all', methods=['GET'])
+    @secure
+    def get_all_meetings():
+        """
+        Get all current users meetings. Returns JSON with meeting details.
+        """
+        user = User.query.get(session['user_id'])
+        user_meetings = user.meetings
+        meeting_list = []
+        for meeting in user_meetings:
+            meeting_list.append({
+                "id": meeting.id,
+                "start_date": meeting.start_date,
+                "end_date": meeting.end_date,
+                "meeting_length": meeting.meeting_length,
+                "meeting_name": meeting.meeting_name,
+                "meeting_description": meeting.meeting_description,
+                "share_code": meeting.share_code
+            })
+        
+        return jsonify(meeting_list), 200
+    
+    @app.route('/meeting', methods=['GET'])
+    @secure
+    def get_current_meeting():
+        """
+        Get the current meeting saved in session. Returns JSON with meeting details.
+        """
+        meeting = Meeting.query.get(session['meeting_id'])
+        if not meeting:
+            return jsonify({"error": "Meeting not found"}), 404
+        timeslots = meeting.timeslots
+        timeslot_list = []
+
+        for timeslot in timeslots:
+            timeslot_list.append({
+                "id": timeslot.id,
+                "order": timeslot.order,
+                "unavailable_users": [user.username for user in timeslot.unavailable_users]
+            })
+
+        return jsonify({
+            "id": meeting.id,
+            "start_date": meeting.start_date,
+            "end_date": meeting.end_date,
+            "meeting_length": meeting.meeting_length,
+            "meeting_name": meeting.meeting_name,
+            "meeting_description": meeting.meeting_description,
+            "share_code": meeting.share_code,
+            "timeslots": timeslot_list
+        }), 200
+    
+    @app.route('/meeting/<int:meeting_id>', methods=['GET'])
+    @secure 
+    def get_meeting(meeting_id):
+        """
+        Get a meeting by ID. Returns JSON with meeting details.
+        """
+        meeting = Meeting.query.get(meeting_id)
+        if not meeting:
+            return jsonify({"error": "Meeting not found"}), 404
+        
+        return jsonify({
+            "id": meeting.id,
+            "start_date": meeting.start_date,
+            "end_date": meeting.end_date,
+            "meeting_length": meeting.meeting_length,
+            "meeting_name": meeting.meeting_name,
+            "meeting_description": meeting.meeting_description,
+            "share_code": meeting.share_code
+        }), 200
