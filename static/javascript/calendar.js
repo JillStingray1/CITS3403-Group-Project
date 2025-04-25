@@ -45,22 +45,27 @@ function is_same_day(a, b) {
 
 
 /**
- * checks if a date object is either today or tomorrow and returns a string if it is
- * otherwise, returns the string of the date
+ * Checks if a date object is either today, tomorrow, within the next week, 
+ * or beyond, and returns a string accordingly.
  * 
  * @param {*} iso_date A date in ISO format
- * @returns "Today" or "Tomorrow", or 
+ * @returns "Today", "Tomorrow", "This [Weekday]", or the full date string
  */
 function format_when(iso_date) {
     const d = new Date(iso_date);
     const today = new Date(); today.setHours(0, 0, 0, 0);
     if (is_same_day(d, today)) return 'Today';
+
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
     if (is_same_day(d, tomorrow)) return 'Tomorrow';
-    return d.toLocaleString('default', { weekday: 'long' });
-}
 
+    const nextWeek = new Date(today);
+    nextWeek.setDate(today.getDate() + 7);
+    if (d < nextWeek) return `This ${d.toLocaleString('default', { weekday: 'long' })}`;
+
+    return d.toLocaleDateString('default', { year: 'numeric', month: 'long', day: 'numeric' });
+}
 
 
 /**
