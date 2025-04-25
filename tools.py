@@ -51,6 +51,7 @@ def save_login_session(user: User):
     session['user_id'] = user.id
     session['username'] = user.username
     session['logged_in'] = True
+    session['meeting_id'] = None  # Initialize meeting_id to None or a default value
     return
 
 def clear_login_session():

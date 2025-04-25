@@ -1,11 +1,10 @@
-from flask import request, jsonify, redirect, url_for
+from flask import session, request, jsonify, redirect, url_for
 from models.Models import User
-import bcrypt
 from tools import validate_username, validate_password, save_login_session, clear_login_session
 from middleware.middleware import secure
 
 
-def init_user_routes(app, db):
+def init_user_routes(app, db, bcrypt):
     """
     Initialize the user routes for the app.
     Args:
@@ -16,9 +15,14 @@ def init_user_routes(app, db):
     print("User routes loaded")
 
     @app.route('/user', methods=['GET'])
+    @secure   
     #this route will be used to get the user details of the logged in user, useful for loading the users meetings
     def get_user():
-        pass
+        return jsonify({
+            "id": session['user_id'],
+            "username": session['username'],
+            "meeting": session['meeting_id']
+        }), 200
 
     @app.route('/user/signup', methods=['POST'])
     def create_user():
@@ -45,7 +49,7 @@ def init_user_routes(app, db):
             if validate_password(password) is False:
                 return jsonify({"error": "Invalid password"}), 400
             
-            new_user = User(username=username, password_hash=bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()))
+            new_user = User(username=username, password_hash=bcrypt.generate_password_hash(password.encode('utf-8')))
 
             db.session.add(new_user)
             db.session.commit()
@@ -67,6 +71,8 @@ def init_user_routes(app, db):
             On success, redurects to the main menu page adds user to session.
             On failure, returns a JSON object with an error message and 400.
         """
+        if 'logged_in' in session and session['logged_in']:
+            return redirect(url_for('static', filename='main-menu.html'))
         
         data = request.get_json()
         username = data.get('username')
@@ -75,7 +81,7 @@ def init_user_routes(app, db):
             return jsonify({"error": "user not found"}), 400
         else: 
             password = data.get('password')
-            if bcrypt.checkpw(password.encode('utf-8'), is_user.password_hash.encode('utf-8')):
+            if bcrypt.check_password_hash( is_user.password_hash, password):
             
                 save_login_session(is_user)
 
