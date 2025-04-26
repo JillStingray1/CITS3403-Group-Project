@@ -47,24 +47,7 @@ document.getElementById("activityForm").addEventListener("submit", function (e) 
       meeting_length: duration
     };
   
-    // OPTIONAL: Log for testing
+    
     console.log("Submitting meeting:", meetingData);
-  
-    // TODO: Send to backend using fetch() when endpoint is known
-    // Example:
-    // fetch('/api/meetings', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(meetingData)
-    // }).then(res => {
-    //   if (res.ok) {
-    //     window.location.href = "date-picker.html";
-    //   } else {
-    //     alert("Something went wrong while creating the activity.");
-    //   }
-    // });
-  
-    // Simulate success and redirect
-    window.location.href = "date-picker.html";
   });
   
