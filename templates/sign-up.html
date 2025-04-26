@@ -16,13 +16,23 @@
       {{ form.hidden_tag() }}
 
       <label for="fullname">{{ form.fullname.label }}</label>
-      {{ form.fullname(id='fullname', class_='form-control') }}
+      {{ form.username(id='username', class_='form-control') }}
+      {% for error in form.username.errors %}
+      <p class="warning">[{{error}}]</p>
+      {% endfor %}
 
       <label for="password">{{ form.password.label }}</label>
       {{ form.password(id='password', class_='form-control') }}
+      {% for error in form.password.errors %}
+      <p class="warning">[{{error}}]</p>
+      {% endfor %}
 
       <label for="confirm_password">{{ form.confirm_password.label }}</label>
       {{ form.confirm_password(id='confirmPassword', class_='form-control') }}
+      {% for error in form.confirm_password.errors %}
+      <p class="warning">[{{error}}]</p>
+      {% endfor %}
+      
 
       {{ form.submit(class_='btn btn-primary') }}
     </form>
