@@ -13,7 +13,18 @@ function load_tasks() {
         name: "Demo Meeting",
         due: local_ISO(now),
         time: "10:00 AM"
-    }];
+    },
+    {
+        name: "Demo Meeting 3",
+        due: "2025-04-30",
+        time: "10:00 AM"
+    },
+    {
+        name: "Demo Meeting 2",
+        due: "2024-04-27",
+        time: "10:00 AM"
+    },
+    ];
 }
 
 /**
@@ -62,7 +73,7 @@ function format_when(iso_date) {
 
     const nextWeek = new Date(today);
     nextWeek.setDate(today.getDate() + 7);
-    if (d < nextWeek) return `This ${d.toLocaleString('default', { weekday: 'long' })}`;
+    if (today < d && d < nextWeek) return `This ${d.toLocaleString('default', { weekday: 'long' })}`;
 
     return d.toLocaleDateString('default', { year: 'numeric', month: 'long', day: 'numeric' });
 }
