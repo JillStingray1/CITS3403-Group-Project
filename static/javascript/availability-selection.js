@@ -1,6 +1,6 @@
-// ---- SETTINGS ---- //
+//! TODO: document functions in this javascript file
 const meeting_duration_minutes = 15; // <<<< Change this value manually if needed
-// ------------------- //
+
 
 const dates = generate_dates(3); // today + 2 more
 const formatted_dates = dates.map(date => format_date(date));
@@ -22,13 +22,13 @@ const slots_needed = Math.ceil(meeting_duration_minutes / 15);
 
 window.onload = () => {
   render_calendar();
-  update_selected_slots_display();
+  // update_selected_slots_display();
 
   document.getElementById('prev-day').addEventListener('click', () => {
     if (current_day_index > 0) {
       current_day_index--;
       render_calendar();
-      update_selected_slots_display();
+      // update_selected_slots_display();
     }
   });
 
@@ -36,7 +36,7 @@ window.onload = () => {
     if (current_day_index < dates.length - 1) {
       current_day_index++;
       render_calendar();
-      update_selected_slots_display();
+      // update_selected_slots_display();
     }
   });
 
@@ -59,7 +59,7 @@ window.onload = () => {
         event.target.classList.add('selected');
       }
 
-      update_selected_slots_display();
+      // update_selected_slots_display();
     }
   });
 };
@@ -108,18 +108,18 @@ function render_calendar() {
   document.getElementById('current-date').textContent = formatted_dates[current_day_index];
 }
 
-function update_selected_slots_display() {
-  const container = document.getElementById('selected-slots');
-  if (selected_slots.length === 0) {
-    container.textContent = "No slots selected";
-  } else {
-    container.innerHTML = "<strong>Selected Slots:</strong><br>" +
-      selected_slots.map(slot => {
-        const end_time = calculate_end_time(slot.time);
-        return `- ${slot.time} → ${end_time} on ${format_date(slot.date)}`;
-      }).join("<br>");
-  }
-}
+// function update_selected_slots_display() {
+//   const container = document.getElementById('selected-slots');
+//   if (selected_slots.length === 0) {
+//     container.textContent = "No slots selected";
+//   } else {
+//     container.innerHTML = "<strong>Selected Slots:</strong><br>" +
+//       selected_slots.map(slot => {
+//         const end_time = calculate_end_time(slot.time);
+//         return `- ${slot.time} → ${end_time} on ${format_date(slot.date)}`;
+//       }).join("<br>");
+//   }
+// }
 
 function calculate_end_time(start_time) {
   const [hours, minutes] = start_time.split(':').map(Number);
@@ -138,6 +138,8 @@ function format_date(date_str) {
   return date_obj.toLocaleDateString('en-GB', options).replace(/ /g, ' ');
 }
 
+
+//! TODO: remove this, as we need to use serverside rendering to redirect
 document.querySelector('.submit-btn').addEventListener('click', () => {
   if (selected_slots.length === 0) {
     alert("Please select at least one slot before submitting!");
