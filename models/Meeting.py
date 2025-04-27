@@ -4,8 +4,6 @@ from extensions import db
 from models.Association import association_table
 from models.User_timeslot import User_timeslot_association
 
-timeslot_length = [15, 30, 45, 60, 90, 120, 300] # in minutes
-
 class Timeslot(db.Model):
     """
     Represents a single selectable time slot for a meeting.
@@ -70,8 +68,8 @@ class Meeting(db.Model):
         Validates that the meeting length is one of the allowed slot lengths.
         `timeslot_length` is assumed to be a predefined list of valid durations.
         """
-        if value not in timeslot_length:
-            raise ValueError(f"meeting_length must be one of {timeslot_length}")
+        if value  %15 != 0 or value > 300:
+            raise ValueError(f"meeting_length must be divisible by 15 and below 5 hours") 
         return value
 
 
