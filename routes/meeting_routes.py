@@ -170,7 +170,7 @@ def init_meeting_routes(app, db):
 
         db.session.commit()
 
-        amount_timeslots_needed = meeting.meeting_length / 15
+        amount_timeslots_needed = meeting.meeting_length // 15
 
         timeslots = get_timeslots(meeting)
         sorted_timeslots = sorted(timeslots, key=lambda x: x["order"]) # sort the timeslots by order
@@ -180,23 +180,22 @@ def init_meeting_routes(app, db):
 
         for i in range(len(sorted_timeslots)):
             current_slot = sorted_timeslots[i]
-
             total_unavailable = 0
 
             for j in range(amount_timeslots_needed):
                 if (i + j) < len(sorted_timeslots):
                     next_slot = sorted_timeslots[i + j]
 
-                    total_unavailable += len(next_slot.unavailable_users)
+                    total_unavailable += len(next_slot["unavailable_users"])
                 else:
                     break
                  
             # Save the total sum into dict_order
-            dict_order[current_slot.order] = total_unavailable
+            dict_order[current_slot["order"]] = total_unavailable
 
         best_order = min(dict_order, key=lambda k: dict_order[k]) # get the order with the least amount of unavailable users in its window
         meeting.best_timeslot = best_order
         db.session.commit()
 
-        return jsonify({"message": "User added to timeslot"}), 200
+        return jsonify({"message": "User added to timeslot(s)"}), 200
     
