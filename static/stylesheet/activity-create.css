@@ -1,0 +1,104 @@
+/* activity-create.css — overrides for activity creation page */
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: #A8BDB3;
+  padding: 20px 40px;
+  height: 120px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+.logo-nav { width: 145px; }
+
+.index-button {
+  font-size: 20px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #000000;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.index-button:hover {
+  background-color: #ddd6fe; /* soft light purple hover */
+  text-decoration: none; 
+}
+
+/* MAIN FORM CARD */
+.card {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 40px;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.card h2 {
+  color: #000000;
+  font-size: 24px;
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+label {
+  display: block;
+  margin-top: 20px;
+  font-weight: bold;
+  font-size: 1rem;
+  text-align: left;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.btn-primary {
+  margin-top: 30px;
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  background-color: #fb923c;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #f97316;
+}
+
+.back-link {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.back-link a {
+  color: #4f46e5;
+  text-decoration: none;
+}
+
+.back-link a:hover {
+  text-decoration: underline;
+}
