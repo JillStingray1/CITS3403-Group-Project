@@ -1,5 +1,6 @@
 from flask import Flask, redirect, url_for
 from flask_bcrypt import Bcrypt
+from flask_migrate import Migrate
 from extensions import db
 from dotenv import load_dotenv
 import os
@@ -12,6 +13,7 @@ app.config['SECRET_KEY'] = os.getenv('SESSION_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_URI')
 
 db.init_app(app)
+migrate = Migrate(app, db)
 
 # Import after app is defined
 import models.Models

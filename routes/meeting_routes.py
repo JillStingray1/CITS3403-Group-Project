@@ -81,6 +81,7 @@ def init_meeting_routes(app, db):
                 "meeting_name": meeting.meeting_name,
                 "meeting_description": meeting.meeting_description,
                 "share_code": meeting.share_code
+              
             })
         
         return jsonify(meeting_list), 200

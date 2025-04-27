@@ -44,9 +44,20 @@ class Meeting(db.Model):
         secondary=association_table,
         back_populates="meetings"
     )
+
+
+    # One-to-one relationship (best slot)
+    best_timeslot_id: Mapped[int] = mapped_column(
+    Integer,
+    ForeignKey("timeslot.id", name="fk_meeting_best_timeslot"),
+    nullable=True
+)
+    best_timeslot: Mapped["Timeslot"] = relationship("Timeslot", foreign_keys=[best_timeslot_id])
+
     meeting_length: Mapped[int] = mapped_column(Integer, nullable=False)
     meeting_name: Mapped[str] = mapped_column(String(80), nullable=False)
     meeting_description: Mapped[str] = mapped_column(String(2400), nullable=True)
+  
 
     # Public-facing share code to invite others to this meeting
     share_code: Mapped[str] = mapped_column(String(80), nullable=False)
