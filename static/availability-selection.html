@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Availability Selection</title>
+    <link rel="stylesheet" href="stylesheet/common.css" />
+    <link rel="stylesheet" href="stylesheet/availability-selection.css">
+</head>
+<body>
+
+<header class="navbar">
+    <img src="images/app-logo/app-logo.png" alt="Logo" class="logo-nav">
+</header>
+
+<main class="main-content">
+    <div class="form-container">
+        <h2>Select Your Availability</h2>
+
+        <div class="navigation">
+            <button id="prev-day">&larr;</button>
+            <h3 id="current-date"></h3>
+            <button id="next-day">&rarr;</button>
+        </div>
+
+        <div class="calendar-scroll-container">
+            <div class="calendar">
+                <div class="time-column" id="time-column">
+                    <!-- Time labels will be inserted here -->
+                </div>
+                <div class="slots-column" id="slots-column">
+                    <!-- Slots will be inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <div id="selected-slots" class="selected-slots">No slots selected</div>
+
+        <button class="submit-btn">Submit</button>
+
+        <a href="activity-create.html" class="secondary-btn">← Back to Activity Creation</a>
+
+    </div>
+</main>
+
+<script src="javascript/availability-selection.js"></script>
+</body>
+</html>
