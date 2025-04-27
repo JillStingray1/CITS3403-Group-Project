@@ -16,6 +16,8 @@
   align-items: center;
 }
 
+.logo-nav { width: 145px; }
+
 .index-button {
   font-size: 20px;
   font-weight: bold;
