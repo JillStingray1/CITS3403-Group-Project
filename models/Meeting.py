@@ -47,13 +47,8 @@ class Meeting(db.Model):
 
 
     # One-to-one relationship (best slot)
-    best_timeslot_id: Mapped[int] = mapped_column(
-    Integer,
-    ForeignKey("timeslot.id", name="fk_meeting_best_timeslot"),
-    nullable=True
-)
-    best_timeslot: Mapped["Timeslot"] = relationship("Timeslot", foreign_keys=[best_timeslot_id])
-
+    best_timeslot: Mapped[int] = mapped_column(Integer, nullable=True)
+    
     meeting_length: Mapped[int] = mapped_column(Integer, nullable=False)
     meeting_name: Mapped[str] = mapped_column(String(80), nullable=False)
     meeting_description: Mapped[str] = mapped_column(String(2400), nullable=True)
