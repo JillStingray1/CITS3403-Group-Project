@@ -76,6 +76,26 @@
   color: #333;
 }
 
+/* Style used fo the body */
+.discription-body {
+  padding: 0% 20%;
+  position: relative;
+}
+
+.discription-body p {
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+.discription-body h2 {
+  text-align: center;
+}
+
+.discription-body ol {
+  padding: 0 20%;
+}
+
+
 /* ─── Responsive Adjustments ─────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .landing-container {
