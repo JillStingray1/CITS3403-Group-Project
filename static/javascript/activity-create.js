@@ -49,5 +49,7 @@ document.getElementById("activityForm").addEventListener("submit", function (e) 
   
     
     console.log("Submitting meeting:", meetingData);
+
+    window.location.href = "availability-selection.html";
   });
   
