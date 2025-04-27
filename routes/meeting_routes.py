@@ -199,3 +199,27 @@ def init_meeting_routes(app, db):
 
         return jsonify({"message": "User added to timeslot(s)"}), 200
     
+
+    @app.route('/meeting/code', methods=['POST'])
+    @secure
+    def join_meeting():
+        """
+        Join a meeting using a share code. Expects JSON as { share_code: 'share_code' }
+        """
+        data = request.get_json()
+        share_code = data.get("share_code")
+        
+        meeting = Meeting.query.filter_by(share_code=share_code).first()
+        
+        if not meeting:
+            return jsonify({"error": "Meeting not found"}), 404
+        
+        user = User.query.get(session['user_id'])
+        
+        if user in meeting.users:
+            return jsonify({"error": "User already in meeting"}), 400
+        
+        meeting.users.append(user)
+        db.session.commit()
+        
+        return jsonify({"message": "User added to meeting"}), 200
