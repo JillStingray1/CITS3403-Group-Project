@@ -32,7 +32,7 @@ def init_user_routes(app, db, bcrypt):
             "meeting": session['meeting_id']
         }), 200
 
-    @app.route('/user/signup', methods=['POST'])
+    @app.route("/user/signup", methods=["GET", "POST"])
     def signup():
         """
         Renders the signup template and redirects to other menus
@@ -47,7 +47,7 @@ def init_user_routes(app, db, bcrypt):
             # Password and Username cannot be null since they have the data required validator
             username = form.username.data
             is_username_valid = User.query.filter(User.username == username).first()
-            if is_username_valid is None:
+            if is_username_valid is not None:
                 return render_template("sign-up.html", form=form, is_username_valid=False)
             password = form.password.data
             new_user = User(username=username, password_hash=bcrypt.generate_password_hash(password.encode("utf-8")))  # type: ignore
@@ -67,7 +67,7 @@ def init_user_routes(app, db, bcrypt):
         """
         return redirect("/")
 
-    @app.route('/user/login', methods=['POST'])
+    @app.route("/user/login", methods=["GET", "POST"])
     def login_user():
         """
         login a user.

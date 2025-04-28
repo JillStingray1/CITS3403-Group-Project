@@ -17,6 +17,9 @@
 
       <label for="username">{{ form.username.label }}</label>
       {{ form.username(id='username', class_='form-control') }}
+      {% if not is_username_valid %}
+      <p class="warning">Username already exists</p>
+      {% endif %}
       {% for error in form.username.errors %}
       <p class="warning">[{{error}}]</p>
       {% endfor %}
@@ -41,6 +44,6 @@
     <p><a href="{{ url_for('index') }}" class="back-link">← Back to home</a></p>
   </div>
 
-  <script src="{{ url_for('static', filename='scripts/signup.js') }}"></script>
+  {# <script src="{{ url_for('static', filename='scripts/signup.js') }}"></script> #}
 </body>
 </html>
