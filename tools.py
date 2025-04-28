@@ -1,5 +1,9 @@
 from re import search
-
+from models.Models import User
+from flask import session
+import random
+import string
+    
 
 def validate_password(password: str) -> bool:
     """
@@ -37,3 +41,41 @@ def validate_username(username: str) -> bool:
     if san_username:
         return san_username.group() == username
     return False
+
+def save_login_session(user: User):
+    """
+    Saves the user login session state (different to ORM session).
+    Args:
+        user (User): The user object to save the session for.
+    """
+    session['user_id'] = user.id
+    session['username'] = user.username
+    session['logged_in'] = True
+    session['meeting_id'] = None  # Initialize meeting_id to None or a default value
+    return
+
+def clear_login_session():
+    """
+    Clears the user login session state.
+    """
+    if 'user_id' not in session:
+        return
+    
+    session.pop('user_id', None)
+    session.pop('username', None)
+    session.pop('logged_in', None)
+    session.pop('meeting_id', None)  # Clear meeting_id from session
+    
+    return
+
+def generate_share_code() -> str:
+    """
+    Generates a random share code for a meeting.
+    The code is a 6-character alphanumeric string.
+    Returns:
+        str: The generated share code
+    """
+    characters = string.ascii_letters + string.digits
+    share_code = ''.join(random.choice(characters) for _ in range(16))
+    
+    return share_code

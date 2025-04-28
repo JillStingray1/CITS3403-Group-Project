@@ -44,9 +44,15 @@ class Meeting(db.Model):
         secondary=association_table,
         back_populates="meetings"
     )
+
+
+    # One-to-one relationship (best slot)
+    best_timeslot: Mapped[int] = mapped_column(Integer, nullable=True)
+    
     meeting_length: Mapped[int] = mapped_column(Integer, nullable=False)
     meeting_name: Mapped[str] = mapped_column(String(80), nullable=False)
     meeting_description: Mapped[str] = mapped_column(String(2400), nullable=True)
+  
 
     # Public-facing share code to invite others to this meeting
     share_code: Mapped[str] = mapped_column(String(80), nullable=False)
@@ -63,7 +69,7 @@ class Meeting(db.Model):
         super().__init__(start_date=start_date, end_date=end_date, **kwargs)
 
     @validates("meeting_length")
-    def validate_meeting_length(self, value):
+    def validate_meeting_length(self, key, value):
         """
         Validates that the meeting length is one of the allowed slot lengths.
         `timeslot_length` is assumed to be a predefined list of valid durations.

@@ -1,4 +1,6 @@
 flask
 flask_sqlalchemy
 jinja2
-bcrypt
+flask_migrate
+flask_bcrypt
+dotenv
