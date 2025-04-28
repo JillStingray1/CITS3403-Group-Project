@@ -1,0 +1,152 @@
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    background-color: #A8BDB3;
+    padding: 20px 40px;
+    height: 120px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .navbar-right {
+    display: flex;
+    align-items: center;
+  }
+
+ .logo-nav { width: 145px; }
+
+.home-link {
+    color: #4f46e5;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.home-link:hover {
+    text-decoration: underline;
+}
+
+
+
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+}
+
+.form-container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 90%;
+    max-width: 600px;
+}
+
+h2 {
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+.navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.navigation button {
+    padding: 8px 12px;
+    margin: 0 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Calendar with scroll */
+.calendar-scroll-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    margin-bottom: 20px;
+}
+
+.calendar {
+    display: flex;
+    flex-direction: row;
+}
+
+/* Time Column */
+.time-column {
+    flex: 0 0 80px;
+    background-color: #f0f0f0;
+    text-align: center;
+    border-right: 1px solid #ccc;
+}
+
+.time-label {
+    height: 40px;
+    line-height: 40px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Slots Column */
+.slots-column {
+    flex: 1;
+}
+
+.time-slot {
+    height: 40px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.time-slot.selected {
+    background-color: #d4e2ff;
+}
+
+.time-slot.disabled {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+}
+
+/* Selected Slots Text */
+.selected-slots {
+    margin: 15px 0;
+    color: #4f46e5;
+    font-weight: bold;
+}
+
+/* Submit Button */
+.submit-btn {
+    width: 100%;
+    background-color: #ff8c42;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.secondary-btn {
+    text-align: center;
+    margin-top: 20px;
+}
+  
+.secondary-btn a {
+    color: #4f46e5;
+    text-decoration: none;
+}
+.secondary-btn:hover {
+    background-color: #ccc;
+}
+
+
+.submit-btn:hover {
+    background-color: #ff7b00;
+}

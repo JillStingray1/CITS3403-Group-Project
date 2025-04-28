@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Activity</title>
+  <link rel="stylesheet" href="stylesheet/common.css" />
+  <link rel="stylesheet" href="stylesheet/activity-create.css" />
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="navbar-right">
+      <a href="index.html" class="logo-link">
+        <img src="images/app-logo/app-logo.png" alt="App Logo" class="logo-nav" />
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-menu-wrapper">
+    <div class="card">
+      <h2>Create New Activity</h2>
+
+      <form id="activityForm">
+        <label for="meeting_name">Activity Title</label>
+        <input type="text" id="meeting_name" name="meeting_name" required />
+
+        <label for="meeting_description">Description</label>
+        <textarea id="meeting_description" name="meeting_description" rows="3"></textarea>
+
+        <label for="start_date">Earliest Meeting Date</label>
+        <input type="date" id="start_date" name="start_date" required />
+
+        <label for="end_date">Latest Meeting Date</label>
+        <input type="date" id="end_date" name="end_date" required />
+
+        <label for="meeting_length">Meeting Duration (minutes)</label>
+        <select id="meeting_length" name="meeting_length" required>
+          <option value="">-- Select Duration --</option>
+          <option value="15">15 minutes</option>
+          <option value="30">30 minutes</option>
+          <option value="45">45 minutes</option>
+          <option value="60">1 hour</option>
+          <option value="90">1.5 hours</option>
+          <option value="120">2 hours</option>
+          <option value="300">5 hours</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">Create Activity</button>
+      </form>
+
+      <p class="back-link"><a href="main-menu.html">← Back to Home</a></p>
+    </div>
+  </div>
+
+  <script src="javascript/activity-create.js"></script>
+</body>
+</html>
