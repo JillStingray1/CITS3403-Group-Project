@@ -1,0 +1,49 @@
+<!-- templates/signup.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/common.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/signup.css') }}" />
+</head>
+
+<body class="signup-body">
+  <div class="signup-container">
+    <h2>Sign Up</h2>
+    <form method="POST" action="{{ url_for('signup') }}">
+      {{ form.hidden_tag() }}
+
+      <label for="username">{{ form.username.label }}</label>
+      {{ form.username(id='username', class_='form-control') }}
+      {% if not is_username_valid %}
+      <p class="warning">Username already exists</p>
+      {% endif %}
+      {% for error in form.username.errors %}
+      <p class="warning">[{{error}}]</p>
+      {% endfor %}
+
+      <label for="password">{{ form.password.label }}</label>
+      {{ form.password(id='password', class_='form-control') }}
+      {% for error in form.password.errors %}
+      <p class="warning">[{{error}}]</p>
+      {% endfor %}
+
+      <label for="confirm_password">{{ form.confirm_password.label }}</label>
+      {{ form.confirm_password(id='confirmPassword', class_='form-control') }}
+      {% for error in form.confirm_password.errors %}
+      <p class="warning">[{{error}}]</p>
+      {% endfor %}
+      
+
+      {{ form.submit(class_='btn btn-primary') }}
+    </form>
+
+    <p>Already have an account? <a href="{{ url_for('index') }}">Log in here</a></p>
+    <p><a href="{{ url_for('index') }}" class="back-link">← Back to home</a></p>
+  </div>
+
+  {# <script src="{{ url_for('static', filename='scripts/signup.js') }}"></script> #}
+</body>
+</html>
