@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Main Menu</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/common.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/mainmenu.css') }}">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-left">
+      <img src="{{ url_for('static', filename='images/app-logo/app-logo.png') }}" alt="Logo" class="logo-img">
+    </div>
+    <div class="navbar-right">
+      <span class="welcome-text">Welcome, {{ username }}</span>
+      <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+    </div>
+  </nav>
+
+  <div class="main-menu-wrapper">
+    <div class="card">
+      <h2>Main Menu</h2>
+      <a href="{{ url_for('activity_creation') }}" class="btn-primary">Create New Activity</a>
+
+      <h3>Activities You've Created</h3>
+      <ul>
+        {% for activity in created_activities %}
+          <li>{{ activity.name }} - {{ activity.start_date }} to {{ activity.end_date }}</li>
+        {% else %}
+          <li>No activities yet.</li>
+        {% endfor %}
+      </ul>
+
+      <h3>Pending Availability Confirmations</h3>
+      <ul>
+        {% for activity in pending_activities %}
+          <li><a href="{{ url_for('availability_selection', activity_id=activity.id) }}">{{ activity.name }}</a></li>
+        {% else %}
+          <li>No pending activities.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
