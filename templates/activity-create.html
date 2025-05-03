@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Activity</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/common.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/activity-create.css') }}" />
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="navbar-right">
+      <a href="index.html" class="logo-link">
+        <img src="{{ url_for('static', filename='media/app-logo.png') }}" alt="App Logo" class="logo-nav" />
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-menu-wrapper">
+    <div class="card">
+      <h2>Create New Activity </h2>
+      <form id="activityForm" method="POST" action="{{ url_for('create_meeting') }}">
+        {{ form.hidden_tag() }}
+    
+            <label for="meeting_name" >{{ form.meeting_name.label }} </label>
+            {{ form.meeting_name(class="form-control", id="meeting_name", required=True) }}
+            {% if form.meeting_name.errors %}
+                <div class="warning">{{ form.meeting_name.errors[0] }}</div>
+            {% endif %}
+
+    
+ 
+            <label for="meeting_description" >{{ form.meeting_description.label }}</label>
+            {{ form.meeting_description(class="form-control", id="meeting_description", rows="3") }}
+            {% if form.meeting_description.errors %}
+                <div class="warning">{{ form.meeting_description.errors[0] }}</div>
+            {% endif %}
+
+
+            <label for="start_date" >{{ form.start_date.label }} </label>
+            {{ form.start_date(class="form-control", id="start_date", required=True) }}
+            {% if form.start_date.errors %}
+                <div class="warning">{{ form.start_date.errors[0] }}</div>
+            {% endif %}
+
+    
+            <label for="end_date" >{{ form.end_date.label }} </label>
+            {{ form.end_date(class="form-control", id="end_date", required=True) }}
+            {% if form.end_date.errors %}
+                <div class="warning">{{ form.end_date.errors[0] }}</div>
+            {% endif %}
+
+    
+   
+            <label for="meeting_length" >{{ form.meeting_length.label }} </label>
+            {{ form.meeting_length(class="form-select", id="meeting_length", min=15, max=300, step=15, required=True) }}
+            {% if form.meeting_length.errors %}
+                <div class="warning">{{ form.meeting_length.errors[0] }}</div>
+            {% endif %}
+    
+    
+            {{ form.submit(class="btn btn-primary") }}
+          </form>
+        </div>
+
+      <p class="back-link"><a href="main-menu.html">← Back to Home</a></p>
+    </div>
+  </div>
+
+  <script src="javascript/activity-create.js"></script>
+</body>
+</html>

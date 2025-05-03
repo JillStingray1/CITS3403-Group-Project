@@ -1,0 +1,53 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Time Tabling Meeting App</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/common.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/landing.css') }}" />
+</head>
+
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='media/app-logo.png') }}"
+             alt="App Logo" class="logo-nav" />
+      </a>
+      <div class="nav-buttons">
+        <a href="{{ url_for('signup') }}" class="btn btn-primary">Get Started</a>
+        {# temporarily disabled this link since login doesn't exist yet #}
+        {# <a href="{{ url_for('login') }}"  class="btn btn-primary">Log In</a> #}
+      </div>
+    </div>
+  </header>
+
+  <!-- Main hero area -->
+  <main>
+    <section class="landing-container">
+      <div class="hero-video">
+        <video autoplay loop muted playsinline>
+          <source src="{{ url_for('static', filename='media/launching-soon.mp4') }}"
+                  type="video/mp4" />
+          Sorry, your browser doesn’t support HTML5 video.
+        </video>
+      </div>
+      <div class="hero-text">
+        <h1>Time Tabling<br>Meeting App</h1>
+      </div>
+      <div class="discription-body">
+        <p>The Time tabling meeting app is a simple to use, effective meeting planning app for any team.</p>
+        <h2>How to use:</h2>
+        <ol>
+          <li>Create an account by pressing the Get Started button in the nav bar.</li>
+          <li>Create a meeting, and share it with your team.</li>
+          <li>Have your team fill out their availability.</li>
+          <li>The website will figure out the best time.</li>
+        </ol>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

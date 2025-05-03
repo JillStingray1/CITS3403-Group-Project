@@ -3,4 +3,5 @@ flask_sqlalchemy
 jinja2
 flask_migrate
 flask_bcrypt
+flask_wtf
 dotenv
