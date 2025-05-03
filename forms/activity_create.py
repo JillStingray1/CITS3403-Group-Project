@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, DateField, IntegerField
-from wtforms.validators import DataRequired, Length, EqualTo, Regexp, LessThan
-import re
+from wtforms.validators import DataRequired, Length, EqualTo, Regexp, NumberRange
 
 
 class meetingCreationForm(FlaskForm):
@@ -53,7 +52,8 @@ class meetingCreationForm(FlaskForm):
         "Meeting Length",
         validators=[
             DataRequired(message="Meeting length is required"),
-            validate_meeting_length
+            validate_meeting_length,
+            NumberRange(min=15, max=300, message="Meeting length must be between 15 and 300 minutes"),
         ],
     )
     submit = SubmitField("Create Meeting")

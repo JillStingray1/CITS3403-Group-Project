@@ -1,8 +1,9 @@
-from flask import Flask, session, request, jsonify, redirect, url_for
+from flask import Flask, session, request, jsonify, redirect, url_for, render_template
 from models.Models import User, Meeting, Timeslot
 from tools import validate_username, validate_password, save_login_session, clear_login_session, generate_share_code
 from middleware.middleware import secure
 from datetime import date, datetime
+from forms.activity_create import meetingCreationForm
 
     #TODO: add a migration to add a new column to the meeting table to store the current most effective timeslot. this should be calculated each time a timeslot is added or removed. change the add_to_timeslot function to update this column. 
     
@@ -22,46 +23,42 @@ def get_timeslots(Meeting):
 
 
 def init_meeting_routes(app, db):
-    @app.route('/meeting', methods=['POST'])
+    @app.route('/meeting/create', methods=["GET","POST"])
     @secure
     def create_meeting():
         """
         Create a new meeting. Expects JSON as { start_date: 'YYYY-MM-DD', end_date: 'YYYY-MM-DD',
         meeting_length: int%15=0, meeting_name: 'meeting_name', meeting_description: 'meeting_description' }
         """
-        data = request.get_json()
-        print(data)
-        parsed_start_date = datetime.strptime(data.get("start_date"), "%Y-%m-%d").date()
-        parsed_end_date = datetime.strptime(data.get("end_date"), "%Y-%m-%d").date()
-        
-        if parsed_start_date > parsed_end_date:
-            return jsonify({"error": "Start date must be before end date"}), 400
-        
-        if data.get("meeting_length") % 15 != 0:
-            return jsonify({"error": "Meeting length must be divisible by 15"}), 400
+
+        form = meetingCreationForm()
+        if form.validate_on_submit():
+            parsed_start_date = datetime.strptime(form.start_date.data, "%Y-%m-%d").date()
+            parsed_end_date = datetime.strptime(form.end_date.data, "%Y-%m-%d").date()
         
         
-        new_meeting = Meeting(start_date=parsed_start_date,
+            new_meeting = Meeting(start_date=parsed_start_date,
                             end_date=parsed_end_date,
-                            meeting_length=data.get("meeting_length"),
-                            meeting_name=data.get("meeting_name"),
-                            meeting_description=data.get("meeting_description"),
+                            meeting_length=form.meeting_length.data,
+                            meeting_name=form.meeting_name.data,
+                            meeting_description=form.meeting_description.data,
                             share_code=generate_share_code()
                             )
         
-        db.session.add(new_meeting)
-        db.session.commit()
-        new_meeting.users.append(User.query.get(session['user_id']))
-
-
-        amount_days = (parsed_end_date - parsed_start_date).days + 1
-        for i in range(amount_days * 32):
-            new_timeslot = Timeslot(order=i, meeting_id=new_meeting.id)
-            db.session.add(new_timeslot)
+            db.session.add(new_meeting)
             db.session.commit()
+            new_meeting.users.append(User.query.get(session['user_id']))
+
+
+            amount_days = (parsed_end_date - parsed_start_date).days + 1
+            for i in range(amount_days * 32):
+                new_timeslot = Timeslot(order=i, meeting_id=new_meeting.id)
+                db.session.add(new_timeslot)
+                db.session.commit()
         
-        session['meeting_id'] = new_meeting.id
-        return redirect(url_for('static', filename='date-selector.html')), 200
+            session['meeting_id'] = new_meeting.id
+            return redirect("/date-selection")  # redirect to the date selection page after creating the meeting
+        return render_template("activity-create.html", form=form)
     
     @app.route('/meeting/all', methods=['GET'])
     @secure
