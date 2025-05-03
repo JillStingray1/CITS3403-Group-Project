@@ -27,15 +27,13 @@ def init_meeting_routes(app, db):
     @secure
     def create_meeting():
         """
-        Create a new meeting. Expects JSON as { start_date: 'YYYY-MM-DD', end_date: 'YYYY-MM-DD',
-        meeting_length: int%15=0, meeting_name: 'meeting_name', meeting_description: 'meeting_description' }
+        Renders the meeting creation template and redirects to other menus
         """
 
         form = meetingCreationForm()
         if form.validate_on_submit():
-            parsed_start_date = datetime.strptime(form.start_date.data, "%Y-%m-%d").date()
-            parsed_end_date = datetime.strptime(form.end_date.data, "%Y-%m-%d").date()
-        
+            parsed_start_date = form.start_date.data
+            parsed_end_date = form.end_date.data
         
             new_meeting = Meeting(start_date=parsed_start_date,
                             end_date=parsed_end_date,
@@ -57,8 +55,11 @@ def init_meeting_routes(app, db):
                 db.session.commit()
         
             session['meeting_id'] = new_meeting.id
-            return redirect("/date-selection")  # redirect to the date selection page after creating the meeting
-        return render_template("activity-create.html", form=form)
+            return redirect("/availability-selection.html")  # redirect to the date selection page after creating the meeting
+        else: 
+            # If the form is not valid, render the form again with errors
+            return render_template("activity-create.html", form=form)
+        
     
     @app.route('/meeting/all', methods=['GET'])
     @secure

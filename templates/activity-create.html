@@ -20,8 +20,8 @@
   <!-- Main Content -->
   <div class="main-menu-wrapper">
     <div class="card">
-      <h2>Create New Activity</h2>
-      <form id="activityForm" method="POST" action="{{ url_for('meeting') }}">
+      <h2>Create New Activity </h2>
+      <form id="activityForm" method="POST" action="{{ url_for('create_meeting') }}">
         {{ form.hidden_tag() }}
     
             <label for="meeting_name" >{{ form.meeting_name.label }} </label>
@@ -62,8 +62,8 @@
     
     
             {{ form.submit(class="btn btn-primary") }}
+          </form>
         </div>
-    </form>
 
       <p class="back-link"><a href="main-menu.html">← Back to Home</a></p>
     </div>
