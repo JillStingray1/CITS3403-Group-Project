@@ -1,23 +1,5 @@
 /* activity-create.css — overrides for activity creation page */
 
-/* NAVBAR */
-.navbar {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  background-color: #A8BDB3;
-  padding: 20px 40px;
-  height: 120px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.navbar-right {
-  display: flex;
-  align-items: center;
-}
-
-.logo-nav { width: 145px; }
-
 .index-button {
   font-size: 20px;
   font-weight: bold;
