@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for
+from flask import Flask, render_template
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from extensions import db
@@ -25,7 +25,7 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    return redirect(url_for('static', filename='index.html'))
+    return render_template("index.html")
 
 from routes import user_routes, meeting_routes
 user_routes.init_user_routes(app, db, bcrypt)
