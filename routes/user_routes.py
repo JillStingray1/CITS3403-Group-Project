@@ -7,14 +7,10 @@ from flask import (
     render_template,
 )
 from models.Models import User
-from tools import validate_username, validate_password, save_login_session, clear_login_session
+from tools import save_login_session, clear_login_session
 from middleware.middleware import secure
-from forms.login import LoginForm
-from forms.sign_up import SignUpForm
-import datetime
+from forms import LoginForm, SignUpForm
 from models.Meeting import Meeting
-from flask_login import current_user
-from flask_login import login_user as flask_login_user, login_required
 from models.Association import association_table
 
 
