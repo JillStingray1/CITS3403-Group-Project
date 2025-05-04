@@ -81,7 +81,6 @@ def init_user_routes(app, db, bcrypt):
             user = User.query.filter(User.username == username).first()
             if user is None:
                 return render_template("login.html", form=form, error="User does not exist.")
-            print(user.username)
             password = form.password.data
             if bcrypt.check_password_hash(user.password_hash, password):
                 save_login_session(user)
