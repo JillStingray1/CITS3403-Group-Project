@@ -10,6 +10,11 @@ from models.Models import User
 from tools import validate_username, validate_password, save_login_session, clear_login_session
 from middleware.middleware import secure
 from forms.sign_up import SignUpForm
+import datetime
+from models.Meeting import Meeting
+from flask_login import current_user
+from flask_login import login_user as flask_login_user, login_required
+from models.Association import association_table
 
 
 def init_user_routes(app, db, bcrypt):
@@ -60,12 +65,19 @@ def init_user_routes(app, db, bcrypt):
             return redirect("/main-menu")  # redirect to the main menu page after signup
         return render_template("sign-up.html", form=form, is_username_valid=True)
 
+    
     @app.route("/main-menu")
+    @secure
     def main_menu():
-        """
-        Serves the main menu, currently a stub function for testing purposes
-        """
-        return redirect("/")
+        meetings = (
+        Meeting.query
+        .join(association_table)
+        .filter(association_table.c.user_id == session["user_id"])
+        .all()
+        )
+        return render_template("main-menu.html", created_activities=meetings)
+    
+    
 
     @app.route("/user/login", methods=["GET", "POST"])
     def login_user():
@@ -80,7 +92,7 @@ def init_user_routes(app, db, bcrypt):
             On failure, returns a JSON object with an error message and 400.
         """
         if 'logged_in' in session and session['logged_in']:
-            return redirect(url_for('static', filename='main-menu.html'))
+            return redirect(url_for('/main-menu'))
 
         data = request.get_json()
         username = data.get('username')
@@ -91,9 +103,9 @@ def init_user_routes(app, db, bcrypt):
             password = data.get('password')
             if bcrypt.check_password_hash( is_user.password_hash, password):
 
-                save_login_session(is_user)
+                flask_login_user(is_user)
 
-                return redirect(url_for('static', filename='main-menu.html')), 200 # redirect to the main menu page after successful login
+                return redirect(url_for('/main-menu'))
             else:
                 return jsonify({"error": "Invalid password"}), 400
 
@@ -105,3 +117,4 @@ def init_user_routes(app, db, bcrypt):
         """
         clear_login_session()
         return redirect(url_for("static", filename="index.html")), 200
+
