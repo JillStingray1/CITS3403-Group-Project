@@ -1,46 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>Main Menu</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/common.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/mainmenu.css') }}">
 </head>
-<body>
+<body class="main-background">
+
+  <!-- Navbar -->
   <nav class="navbar">
     <div class="navbar-left">
-      <img src="{{ url_for('static', filename='images/app-logo/app-logo.png') }}" alt="Logo" class="logo-img">
+      <a href="/" class="logo-link">
+        <img src="{{ url_for('static', filename='media/app-logo.png') }}" alt="Logo" class="logo-nav">
+      </a>
     </div>
     <div class="navbar-right">
-      <span class="welcome-text">Welcome, {{ username }}</span>
-      <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+      <a href="/meeting/join" class="button button-orange">Use Share Code</a>
+      <a href="{{ url_for('create_meeting') }}" class="button button-orange">+ New Activity</a>
     </div>
   </nav>
 
-  <div class="main-menu-wrapper">
-    <div class="card">
-      <h2>Main Menu</h2>
-      <a href="{{ url_for('activity_creation') }}" class="btn-primary">Create New Activity</a>
+  <!-- Main -->
+  <main class="main-content">
+    <h1>Main Menu</h1>
 
-      <h3>Activities You've Created</h3>
-      <ul>
-        {% for activity in created_activities %}
-          <li>{{ activity.name }} - {{ activity.start_date }} to {{ activity.end_date }}</li>
-        {% else %}
-          <li>No activities yet.</li>
-        {% endfor %}
-      </ul>
+    <!-- Current Activities -->
+    <section class="card-section">
+      <h2>Current Activities</h2>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Activity</th>
+              <th>When</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for activity in created_activities %}
+              <tr>
+                <td>{{ activity.meeting_name }}</td>
+                <td>{{ activity.start_date.strftime('%d %B %Y') }}</td>
+                <td>10:00 AM</td>  {# Optional: replace with activity.time if available #}
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="3">No current activities.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-      <h3>Pending Availability Confirmations</h3>
-      <ul>
-        {% for activity in pending_activities %}
-          <li><a href="{{ url_for('availability_selection', activity_id=activity.id) }}">{{ activity.name }}</a></li>
-        {% else %}
-          <li>No pending activities.</li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
+    <!-- Past Activities (Optional Placeholder) -->
+    <section class="card-section">
+      <h2>Past Activities</h2>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Activity</th>
+              <th>When</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Add Jinja loop for past_activities if Flask sends it -->
+            {% if past_activities %}
+              {% for activity in past_activities %}
+                <tr>
+                  <td>{{ activity.meeting_name }}</td>
+                  <td>{{ activity.start_date.strftime('%d %B %Y') }}</td>
+                  <td>10:00 AM</td>
+                </tr>
+              {% endfor %}
+            {% else %}
+              <tr>
+                <td colspan="3">No past activities.</td>
+              </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Calendar Placeholder -->
+    <section class="calendar-section">
+      <div class="calendar-placeholder">
+        <p>Calendar Placeholder</p>
+      </div>
+    </section>
+  </main>
+
 </body>
 </html>
