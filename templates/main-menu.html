@@ -8,7 +8,7 @@
 </head>
 <body class="main-background">
 
-  <!-- Navbar -->
+
   <nav class="navbar">
     <div class="navbar-left">
       <a href="/" class="logo-link">
@@ -21,11 +21,11 @@
     </div>
   </nav>
 
-  <!-- Main -->
+
   <main class="main-content">
     <h1>Main Menu</h1>
 
-    <!-- Current Activities -->
+
     <section class="card-section">
       <h2>Current Activities</h2>
       <div class="card">
@@ -54,7 +54,7 @@
       </div>
     </section>
 
-    <!-- Past Activities (Optional Placeholder) -->
+
     <section class="card-section">
       <h2>Past Activities</h2>
       <div class="card">
@@ -67,7 +67,7 @@
             </tr>
           </thead>
           <tbody>
-            <!-- Add Jinja loop for past_activities if Flask sends it -->
+
             {% if past_activities %}
               {% for activity in past_activities %}
                 <tr>
@@ -86,7 +86,6 @@
       </div>
     </section>
 
-    <!-- Calendar Placeholder -->
     <section class="calendar-section">
       <div class="calendar-placeholder">
         <p>Calendar Placeholder</p>
