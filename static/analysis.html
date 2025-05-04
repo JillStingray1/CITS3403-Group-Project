@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stats</title>
+
+  <!-- shared resets & utilities -->
+  <link rel="stylesheet" href="stylesheet/common.css" />
+  <!-- analysis-page styles -->
+  <link rel="stylesheet" href="stylesheet/analysis.css" />
+
+  <!-- Chart.js for pie chart -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html">
+        <img src="media/app-logo.png" alt="App Logo" class="logo-nav" />
+      </a>
+      <div class="nav-buttons">
+        <a href="main-menu.html" class="btn btn-primary">← Back to Main Menu</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="analysis-wrapper">
+    <h1 class="page-title">Stats</h1>
+
+    <div class="stats-controls">
+      <label for="week-select">Week of</label>
+      <select id="week-select" class="week-dropdown"></select>
+    </div>
+
+    <section class="card stats-card">
+      <h2>Most Popular Free Times</h2>
+      <table class="stats-table">
+        <thead>
+          <tr><th>Time Slot</th><th>Users</th></tr>
+        </thead>
+        <tbody id="stats-table-body">
+          <!-- JS will fill this -->
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card heatmap-card">
+      <h2>Weekly Availability Heatmap</h2>
+      <div class="heatmap-container">
+        <div id="heatmap-grid" class="heatmap-grid"></div>
+      </div>
+    </section>
+
+    <section class="card pie-card">
+      <h2>Pie Chart of Availability by Day</h2>
+      <div class="pie-container">
+        <div class="pie-legend" id="pie-legend"></div>
+        <div class="pie-chart">
+          <canvas id="pieCanvas"></canvas>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="javascript/analysis.js"></script>
+</body>
+</html>
