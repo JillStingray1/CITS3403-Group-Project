@@ -10,6 +10,12 @@ from models.Models import User
 from tools import validate_username, validate_password, save_login_session, clear_login_session
 from middleware.middleware import secure
 from forms import LoginForm, SignUpForm
+from forms.sign_up import SignUpForm
+import datetime
+from models.Meeting import Meeting
+from flask_login import current_user
+from flask_login import login_user as flask_login_user, login_required
+from models.Association import association_table
 
 
 def init_user_routes(app, db, bcrypt):
@@ -22,11 +28,15 @@ def init_user_routes(app, db, bcrypt):
     # TODO: add authentication to the routes that require a user to be logged in. fill in the pass statements with the appropriate code. upon login, pass the user id to the session.
     print("User routes loaded")
 
-    @app.route("/user", methods=["GET"])
-    @secure
+    @app.route('/user', methods=['GET'])
+    @secure   
     # this route will be used to get the user details of the logged in user, useful for loading the users meetings
     def get_user():
-        return jsonify({"id": session["user_id"], "username": session["username"], "meeting": session["meeting_id"]}), 200
+        return jsonify({
+            "id": session['user_id'],
+            "username": session['username'],
+            "meeting": session['meeting_id']
+        }), 200
 
     @app.route("/user/signup", methods=["GET", "POST"])
     def signup():
@@ -46,7 +56,6 @@ def init_user_routes(app, db, bcrypt):
             if is_username_valid is not None:
                 return render_template("sign-up.html", form=form, is_username_valid=False)
             password = form.password.data
-            # password is required and hence can never be None
             new_user = User(username=username, password_hash=bcrypt.generate_password_hash(password.encode("utf-8")))  # type: ignore
 
             db.session.add(new_user)
@@ -58,41 +67,50 @@ def init_user_routes(app, db, bcrypt):
         return render_template("sign-up.html", form=form, is_username_valid=True)
 
     @app.route("/main-menu")
+    @secure
     def main_menu():
-        """
-        Serves the main menu, currently a stub function for testing purposes
-        """
-        return redirect("/")
+        meetings = (
+        Meeting.query
+        .join(association_table)
+        .filter(association_table.c.user_id == session["user_id"])
+        .all()
+        )
+        return render_template("main-menu.html", created_activities=meetings)
+    
+    
 
     @app.route("/user/login", methods=["GET", "POST"])
     def login():
         """
-        Renders the login template and redirects to other menus
+        login a user.
+
+        Args:
+            JSON { username: 'username', password: 'password'}
 
         Returns:
-            On success, redirects to the main menu page and adds user to session.
+            On success, redirects to the main menu page adds user to session.
             On failure, returns a JSON object with an error message and 400.
-
         """
-        form = LoginForm()
-        if form.validate_on_submit():
-            # Password and Username cannot be null since they have the data required validator
-            username = form.username.data
-            user = User.query.filter(User.username == username).first()
-            if user is None:
-                return render_template("login.html", form=form, error="User does not exist.")
-            password = form.password.data
-            if bcrypt.check_password_hash(user.password_hash, password):
-                save_login_session(user)
-                return redirect("/main-menu")
-            return render_template("login.html", form=form, error="Incorrect Password.")
+        if 'logged_in' in session and session['logged_in']:
+            return redirect(url_for('/main-menu'))
 
-            # setting the session variables to the current user
+        data = request.get_json()
+        username = data.get('username')
+        is_user = User.query.filter(User.username == username).first()
+        if is_user is None:
+            return jsonify({"error": "user not found"}), 400
+        else: 
+            password = data.get('password')
+            if bcrypt.check_password_hash( is_user.password_hash, password):
 
-        return render_template("login.html", form=form, error=None)
+                flask_login_user(is_user)
 
-    @app.route("/user/logout", methods=["GET"])
-    @secure
+                return redirect(url_for('/main-menu'))
+            else:
+                return jsonify({"error": "Invalid password"}), 400
+
+    @app.route('/user/logout', methods=['GET'])
+    @secure   
     def logout_user():
         """
         Logout a user. Redirects to the index page.
