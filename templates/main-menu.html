@@ -5,6 +5,7 @@
   <title>Main Menu</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/common.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/mainmenu.css') }}">
+  <script src="{{ url_for('static', filename='javascript/meeting-popup.js') }}"></script>
 </head>
 <body class="main-background">
 
@@ -27,14 +28,23 @@
           <p>Enter the share code to import a shared activity:</p>
           <form method="POST" class="share-form">
             {{ form.hidden_tag() }}
-            {{form.code(class="share-code-input", placeholder="ABC123")}}
-            {{form.submit(class="btn btn-primary import-btn")}}
+            {{ form.code(class= "share-code-input", placeholder = "ABC123", id = "code") }}
+            <button id="show-details" class="btn btn-primary">Show Details</button>
+            <div id="popup" class="popup">
+              <div class="popup-content">
+                {# TODO: Actually add tags to fill in the content #}
+                <h2>Hello!</h2>
+                <p>This is a simple pop-up using HTML and CSS.</p>
+                {{ form.submit(class= "btn btn-primary import-btn") }}
+              </div>
+            </div>
           </form>
         </div>
       </div>
       <a href="{{ url_for('create_meeting') }}" class="button button-orange">+ New Activity</a>
     </div>
   </nav>
+  
 
 
   <main class="main-content">

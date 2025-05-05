@@ -211,3 +211,26 @@ body.main-background {
 .share-menu .btn-primary:hover {
   background-color: #3C5ED2;
 }
+/* Pop up menu for displaying things */
+.popup {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Popup content */
+.popup-content {
+  background-color: #f9f5d7;
+  margin: 15% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
