@@ -10,8 +10,6 @@ from models.Models import User
 from tools import save_login_session, clear_login_session
 from middleware.middleware import secure
 from forms import LoginForm, SignUpForm
-from models.Meeting import Meeting
-from models.Association import association_table
 
 
 def init_user_routes(app, db, bcrypt):
@@ -61,19 +59,6 @@ def init_user_routes(app, db, bcrypt):
             # setting the session variables to the current user
             return redirect("/main-menu")  # redirect to the main menu page after signup
         return render_template("sign-up.html", form=form, is_username_valid=True)
-
-    @app.route("/main-menu")
-    @secure
-    def main_menu():
-        meetings = (
-        Meeting.query
-        .join(association_table)
-        .filter(association_table.c.user_id == session["user_id"])
-        .all()
-        )
-        return render_template("main-menu.html", created_activities=meetings)
-    
-    
 
     @app.route("/user/login", methods=["GET", "POST"])
     def login():
