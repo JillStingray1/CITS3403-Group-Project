@@ -16,7 +16,22 @@
       </a>
     </div>
     <div class="navbar-right">
-      <a href="/meeting/join" class="button button-orange">Use Share Code</a>
+      <div class="share-dropdown">
+        <button class="btn btn-primary dropdown-trigger">Use Share Code</button>
+      
+        <div class="share-menu">
+          <div class="share-menu-header">
+            <span>Have a code?</span>
+            <button class="share-close" aria-label="Close">×</button>
+          </div>
+          <p>Enter the share code to import a shared activity:</p>
+          <form method="POST" class="share-form">
+            {{ form.hidden_tag() }}
+            {{form.code(class="share-code-input", placeholder="ABC123")}}
+            {{form.submit(class="btn btn-primary import-btn")}}
+          </form>
+        </div>
+      </div>
       <a href="{{ url_for('create_meeting') }}" class="button button-orange">+ New Activity</a>
     </div>
   </nav>
@@ -35,6 +50,7 @@
               <th>Activity</th>
               <th>When</th>
               <th>Time</th>
+              <th>Share Code</th>
             </tr>
           </thead>
           <tbody>
@@ -43,6 +59,7 @@
                 <td>{{ activity.meeting_name }}</td>
                 <td>{{ activity.start_date.strftime('%d %B %Y') }}</td>
                 <td>10:00 AM</td>  {# Optional: replace with activity.time if available #}
+                <td>{{ activity.share_code }}</td>
               </tr>
             {% else %}
               <tr>
