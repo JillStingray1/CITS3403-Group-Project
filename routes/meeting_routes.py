@@ -2,7 +2,7 @@ from flask import Flask, session, request, jsonify, redirect, url_for, render_te
 from models.Models import User, Meeting, Timeslot
 from tools import validate_username, validate_password, save_login_session, clear_login_session, generate_share_code
 from middleware.middleware import secure
-from datetime import date, datetime
+from datetime import date
 from forms import meetingCreationForm, ShareCodeForm
 from models.Meeting import Meeting
 from models.Association import association_table
@@ -137,6 +137,28 @@ def init_meeting_routes(app, db):
             "timeslots": timeslot_list
         }), 200
 
+    @app.route("/meeting/code/<share_code>", methods=["GET"])
+    @secure
+    def get_meeting_by_code(share_code):
+        """
+        Get a meeting by ID. Returns JSON with meeting details.
+        """
+        meeting = Meeting.query.filter_by(share_code=share_code).first()
+        if not meeting:
+            return jsonify({"error": "Meeting not found"}), 404
+        return (
+            jsonify(
+                {
+                    "start_date": meeting.start_date.strftime("%Y %B %d"),
+                    "end_date": meeting.end_date.strftime("%Y %B %d"),
+                    "meeting_length": meeting.meeting_length,
+                    "meeting_name": meeting.meeting_name,
+                    "meeting_description": meeting.meeting_description,
+                }
+            ),
+            200,
+        )
+
     @app.route('/meeting/timeslot', methods=['POST'])
     @secure
     def add_to_timeslot():
@@ -221,6 +243,14 @@ def init_meeting_routes(app, db):
     @app.route("/main-menu", methods=["GET", "POST"])
     @secure
     def main_menu():
+        """
+        Loads the main menu template, which has a list of user's meetings and
+        handles sharing using share codes
+
+        Returns:
+            The rendered main menu template by default, or if there is an
+            error. Reloads the page if sharing successful
+        """
         meetings = Meeting.query.join(association_table).filter(association_table.c.user_id == session["user_id"]).all()
         form = ShareCodeForm()
         if form.validate_on_submit():
