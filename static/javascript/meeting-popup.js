@@ -16,7 +16,6 @@ function confirm_share_code(e) {
             if (response.ok) {
                 response.json().then(response_json => {
                     console.log(response_json)
-                    alert(response_json.meeting_name)
                     document.getElementById("meeting-name").textContent
                         = response_json.meeting_name;
                     document.getElementById("meeting-description").textContent
@@ -27,8 +26,9 @@ function confirm_share_code(e) {
                         = response_json.end_date
                     document.getElementById("popup").style.display = "block"
                 })
-            } else if (response == 403) {
+            } else if (response.status == 403) {
                 response.json().then(response_json => {
+                    console.log(response_json)
                     document.getElementById("error").textContent = response_json.error
                 })
             }
