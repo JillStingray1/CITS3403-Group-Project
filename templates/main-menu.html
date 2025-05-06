@@ -28,8 +28,11 @@
           <p>Enter the share code to import a shared activity:</p>
           <form method="POST" class="share-form">
             {{ form.hidden_tag() }}
+
             {{ form.code(class= "share-code-input", placeholder = "ABC123", id = "code") }}
+            <p id="error"></p>
             <button id="show-details" class="btn btn-primary">Show Details</button>
+
             <div id="popup" class="popup">
               <div class="popup-content">
                 <h2 id="meeting-name"></h2>
@@ -37,6 +40,7 @@
                 <p><span id="start-date"></span> to <span id="end-date"></span></p>
                 {{ form.submit(class= "btn btn-primary import-btn") }}
               </div>
+
             </div>
           </form>
         </div>

@@ -12,7 +12,7 @@ function confirm_share_code(e) {
     let base_url = window.location.origin
     let fetch_url = base_url + '/meeting/code/' + code
     try {
-        let response = fetch(fetch_url).then(response => {
+        fetch(fetch_url).then(response => {
             if (response.ok) {
                 response.json().then(response_json => {
                     console.log(response_json)
@@ -25,6 +25,11 @@ function confirm_share_code(e) {
                         = response_json.start_date;
                     document.getElementById("end-date").textContent
                         = response_json.end_date
+                    document.getElementById("popup").style.display = "block"
+                })
+            } else if (response == 403) {
+                response.json().then(response_json => {
+                    document.getElementById("error").textContent = response_json.error
                 })
             }
         })
@@ -32,7 +37,7 @@ function confirm_share_code(e) {
         console.log(error.message);
     }
 
-    document.getElementById("popup").style.display = "block"
+    
 }
 
 window.onload = () => {

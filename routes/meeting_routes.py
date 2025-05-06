@@ -137,27 +137,7 @@ def init_meeting_routes(app, db):
             "timeslots": timeslot_list
         }), 200
 
-    @app.route("/meeting/code/<share_code>", methods=["GET"])
-    @secure
-    def get_meeting_by_code(share_code):
-        """
-        Get a meeting by ID. Returns JSON with meeting details.
-        """
-        meeting = Meeting.query.filter_by(share_code=share_code).first()
-        if not meeting:
-            return jsonify({"error": "Meeting not found"}), 404
-        return (
-            jsonify(
-                {
-                    "start_date": meeting.start_date.strftime("%Y %B %d"),
-                    "end_date": meeting.end_date.strftime("%Y %B %d"),
-                    "meeting_length": meeting.meeting_length,
-                    "meeting_name": meeting.meeting_name,
-                    "meeting_description": meeting.meeting_description,
-                }
-            ),
-            200,
-        )
+    
 
     @app.route('/meeting/timeslot', methods=['POST'])
     @secure
@@ -267,3 +247,28 @@ def init_meeting_routes(app, db):
             db.session.commit()
             return redirect(url_for("main_menu"))
         return render_template("main-menu.html", created_activities=meetings, form=form)
+    
+    @app.route("/meeting/code/<share_code>", methods=["GET"])
+    @secure
+    def get_meeting_by_code(share_code):
+        """
+        Get a meeting by ID. Returns JSON with meeting details. 
+        This is used for ajax in the main menu
+        """
+        meeting = Meeting.query.filter_by(share_code=share_code).first()
+        if not meeting:
+            return jsonify({"error": "Meeting not found"}), 403
+        if User.query.get(session["user_id"]) in meeting.users:
+            return jsonify({"error": "You are already in this meeting"}), 403
+        return (
+            jsonify(
+                {
+                    "start_date": meeting.start_date.strftime("%Y %B %d"),
+                    "end_date": meeting.end_date.strftime("%Y %B %d"),
+                    "meeting_length": meeting.meeting_length,
+                    "meeting_name": meeting.meeting_name,
+                    "meeting_description": meeting.meeting_description,
+                }
+            ),
+            200,
+        )
