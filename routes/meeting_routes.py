@@ -1,6 +1,13 @@
 from flask import Flask, session, request, jsonify, redirect, url_for, render_template
 from models.Models import User, Meeting, Timeslot
-from tools import validate_username, validate_password, save_login_session, clear_login_session, generate_share_code
+from tools import (
+    validate_username,
+    validate_password,
+    save_login_session,
+    clear_login_session,
+    generate_share_code,
+    get_best_times_from_meetings,
+)
 from middleware.middleware import secure
 from datetime import date
 from forms import meetingCreationForm, ShareCodeForm
@@ -137,8 +144,6 @@ def init_meeting_routes(app, db):
             "timeslots": timeslot_list
         }), 200
 
-    
-
     @app.route('/meeting/timeslot', methods=['POST'])
     @secure
     def add_to_timeslot():
@@ -232,6 +237,7 @@ def init_meeting_routes(app, db):
             error. Reloads the page if sharing successful
         """
         meetings = Meeting.query.join(association_table).filter(association_table.c.user_id == session["user_id"]).all()
+        current_activities, past_activities = get_best_times_from_meetings(meetings)
         form = ShareCodeForm()
         if form.validate_on_submit():
             user = User.query.get(session["user_id"])
@@ -247,7 +253,7 @@ def init_meeting_routes(app, db):
             db.session.commit()
             return redirect(url_for("main_menu"))
         return render_template("main-menu.html", created_activities=meetings, form=form)
-    
+
     @app.route("/meeting/code/<share_code>", methods=["GET"])
     @secure
     def get_meeting_by_code(share_code):

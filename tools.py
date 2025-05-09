@@ -45,7 +45,6 @@ def validate_username(username: str) -> bool:
         return san_username.group() == username
     return False
 
-
 def save_login_session(user: User):
     """
     Saves the user login session state (different to ORM session).
@@ -57,7 +56,6 @@ def save_login_session(user: User):
     session["logged_in"] = True
     session["meeting_id"] = None  # Initialize meeting_id to None or a default value
     return
-
 
 def clear_login_session():
     """
@@ -73,7 +71,6 @@ def clear_login_session():
 
     return
 
-
 def generate_share_code() -> str:
     """
     Generates a random share code for a meeting.
@@ -87,7 +84,7 @@ def generate_share_code() -> str:
     return share_code
 
 
-def get_best_time_from_slot(best_timeslot: int, start_date: datetime) -> datetime:
+def get_best_time_from_slot(best_timeslot: int, start_date: date) -> datetime:
     """
     Converts the best time slot of a meeting into the datetime format
 
@@ -105,8 +102,36 @@ def get_best_time_from_slot(best_timeslot: int, start_date: datetime) -> datetim
     Returns:
         `datetime`: The best date and time for an even
     """
+    if best_timeslot is None:
+        best_timeslot = 0
     best_days = best_timeslot // 32
     best_slot = best_timeslot % 32
-    start_date.replace(hour=9, minute=0)
-    best_time = start_date + timedelta(days=best_days, minutes=15 * best_slot)
+    best_time = datetime.combine(start_date, datetime.min.time())
+    best_time.replace(hour=9, minute=0)
+    best_time += timedelta(days=best_days, minutes=15 * best_slot)
     return best_time
+
+
+def get_best_times_from_meetings(
+    meetings: list[Meeting],
+) -> tuple[list[tuple[datetime, Meeting]], list[tuple[datetime, Meeting]]]:
+    """
+    _summary_
+
+    Args:
+        meetings (list[Meeting]): _description_
+
+    Returns:
+        tuple[list[tuple[datetime, Meeting]], list[tuple[datetime, Meeting]]]: _description_
+    """
+    current_activities = []
+    past_activities = []
+    current_date = date.today()
+    for meeting in meetings:
+        if meeting.end_date < current_date:  # type: ignore
+            past_activities.append((get_best_time_from_slot(meeting.best_timeslot, meeting.start_date), meeting))  # type: ignore
+        else:
+            current_activities.append((get_best_time_from_slot(meeting.best_timeslot, meeting.start_date), meeting))  # type: ignore
+    current_activities.sort(key=lambda item: item[0])
+    past_activities.sort(key=lambda item: item[0], reverse=True)
+    return (current_activities, past_activities)
