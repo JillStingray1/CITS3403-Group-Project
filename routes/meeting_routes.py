@@ -252,7 +252,9 @@ def init_meeting_routes(app, db):
             meeting.users.append(user)
             db.session.commit()
             return redirect(url_for("main_menu"))
-        return render_template("main-menu.html", created_activities=meetings, form=form)
+        return render_template(
+            "main-menu.html", created_activities=current_activities, past_activities=past_activities, form=form
+        )
 
     @app.route("/meeting/code/<share_code>", methods=["GET"])
     @secure

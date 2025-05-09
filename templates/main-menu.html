@@ -62,18 +62,18 @@
           <thead>
             <tr>
               <th>Activity</th>
-              <th>When</th>
-              <th>Time</th>
+              <th>End Date</th>
+              <th>Best Time</th>
               <th>Share Code</th>
             </tr>
           </thead>
           <tbody>
             {% for activity in created_activities %}
               <tr>
-                <td>{{ activity.meeting_name }}</td>
-                <td>{{ activity.start_date.strftime('%d %B %Y') }}</td>
-                <td>10:00 AM</td>  {# Optional: replace with activity.time if available #}
-                <td>{{ activity.share_code }}</td>
+                <td>{{ activity[1].meeting_name }}</td>
+                <td>{{ activity[1].end_date.strftime('%d %B %Y') }}</td>
+                <td>{{ activity[0].strftime("%d %B %H:%M") }}</td> {# Optional: replace with activity.time if available #}
+                <td>{{ activity[1].share_code }}</td>
               </tr>
             {% else %}
               <tr>
@@ -93,25 +93,24 @@
           <thead>
             <tr>
               <th>Activity</th>
-              <th>When</th>
-              <th>Time</th>
+              <th>End Date</th>
+              <th>Best Time</th>
+              <th>Share Code</th>
             </tr>
           </thead>
           <tbody>
-
-            {% if past_activities %}
-              {% for activity in past_activities %}
-                <tr>
-                  <td>{{ activity.meeting_name }}</td>
-                  <td>{{ activity.start_date.strftime('%d %B %Y') }}</td>
-                  <td>10:00 AM</td>
-                </tr>
-              {% endfor %}
-            {% else %}
-              <tr>
-                <td colspan="3">No past activities.</td>
+            {% for activity in past_activities %}
+            <tr>
+              <td>{{ activity[1].meeting_name }}</td>
+              <td>{{ activity[1].end_date.strftime('%d %B %Y') }}</td>
+              <td>{{ activity[0].strftime("%d %B %H:%M") }}</td> {# Optional: replace with activity.time if available #}
+              <td>{{ activity[1].share_code }}</td>
               </tr>
-            {% endif %}
+            {% else %}
+            <tr>
+              <td colspan="3">No past activities.</td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>

@@ -107,7 +107,8 @@ def get_best_time_from_slot(best_timeslot: int, start_date: date) -> datetime:
     best_days = best_timeslot // 32
     best_slot = best_timeslot % 32
     best_time = datetime.combine(start_date, datetime.min.time())
-    best_time.replace(hour=9, minute=0)
+    best_time = best_time.replace(hour=9, minute=0)
+    print(best_time.strftime("%d %m %H:%M"))
     best_time += timedelta(days=best_days, minutes=15 * best_slot)
     return best_time
 
@@ -116,7 +117,7 @@ def get_best_times_from_meetings(
     meetings: list[Meeting],
 ) -> tuple[list[tuple[datetime, Meeting]], list[tuple[datetime, Meeting]]]:
     """
-    _summary_
+    Breaks a list of meetings into present and past meetings, and then sorts each in ascending order
 
     Args:
         meetings (list[Meeting]): _description_
