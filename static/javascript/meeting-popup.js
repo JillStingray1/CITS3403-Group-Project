@@ -15,7 +15,6 @@ function confirm_share_code(e) {
         fetch(fetch_url).then(response => {
             if (response.ok) {
                 response.json().then(response_json => {
-                    console.log(response_json)
                     document.getElementById("meeting-name").textContent
                         = response_json.meeting_name;
                     document.getElementById("meeting-description").textContent
@@ -28,13 +27,11 @@ function confirm_share_code(e) {
                 })
             } else if (response.status == 403) {
                 response.json().then(response_json => {
-                    console.log(response_json)
                     document.getElementById("error").textContent = response_json.error
                 })
             }
         })
     } catch (error) {
-        console.log(error.message);
     }
 
     
