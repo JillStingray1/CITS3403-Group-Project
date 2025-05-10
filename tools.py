@@ -113,17 +113,25 @@ def get_best_time_from_slot(best_timeslot: int, start_date: date) -> datetime:
     return best_time
 
 
-def get_best_times_from_meetings(
+def format_meetings(
     meetings: list[Meeting],
 ) -> tuple[list[tuple[datetime, Meeting]], list[tuple[datetime, Meeting]]]:
     """
-    Breaks a list of meetings into present and past meetings, and then sorts each in ascending order
+    Breaks a list of meetings into present and past meetings,
+    and then sorts each in ascending order in terms of best times
+    for current activities, and descending order in terms of past activities
 
     Args:
-        meetings (list[Meeting]): _description_
+        meetings (list[Meeting]): A list of meetings that we would like to
+        format
 
     Returns:
-        tuple[list[tuple[datetime, Meeting]], list[tuple[datetime, Meeting]]]: _description_
+        tuple[list[tuple[datetime, Meeting]], list[tuple[datetime, Meeting]]]:
+        A tuple with the first list containing current meetings, and the second
+        list containing past meetings.
+
+        Each list stores the meeting in a tuple in the form of
+        (best_time, meeting)
     """
     current_activities = []
     past_activities = []
