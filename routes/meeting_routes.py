@@ -6,7 +6,7 @@ from tools import (
     save_login_session,
     clear_login_session,
     generate_share_code,
-    get_best_times_from_meetings,
+    format_meetings,
 )
 from middleware.middleware import secure
 from datetime import date
@@ -237,7 +237,7 @@ def init_meeting_routes(app, db):
             error. Reloads the page if sharing successful
         """
         meetings = Meeting.query.join(association_table).filter(association_table.c.user_id == session["user_id"]).all()
-        current_activities, past_activities = get_best_times_from_meetings(meetings)
+        current_activities, past_activities = format_meetings(meetings)
         form = ShareCodeForm()
         if form.validate_on_submit():
             user = User.query.get(session["user_id"])
