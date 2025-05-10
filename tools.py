@@ -1,9 +1,12 @@
 from re import search
 from models.Models import User
 from flask import session
+from datetime import datetime, timedelta, date
+from sqlalchemy import Date
 import random
 import string
-    
+from models.Meeting import Meeting
+
 
 def validate_password(password: str) -> bool:
     """
@@ -48,24 +51,24 @@ def save_login_session(user: User):
     Args:
         user (User): The user object to save the session for.
     """
-    session['user_id'] = user.id
-    session['username'] = user.username
-    session['logged_in'] = True
-    session['meeting_id'] = None  # Initialize meeting_id to None or a default value
+    session["user_id"] = user.id
+    session["username"] = user.username
+    session["logged_in"] = True
+    session["meeting_id"] = None  # Initialize meeting_id to None or a default value
     return
 
 def clear_login_session():
     """
     Clears the user login session state.
     """
-    if 'user_id' not in session:
+    if "user_id" not in session:
         return
-    
-    session.pop('user_id', None)
-    session.pop('username', None)
-    session.pop('logged_in', None)
-    session.pop('meeting_id', None)  # Clear meeting_id from session
-    
+
+    session.pop("user_id", None)
+    session.pop("username", None)
+    session.pop("logged_in", None)
+    session.pop("meeting_id", None)  # Clear meeting_id from session
+
     return
 
 def generate_share_code() -> str:
@@ -76,6 +79,68 @@ def generate_share_code() -> str:
         str: The generated share code
     """
     characters = string.ascii_letters + string.digits
-    share_code = ''.join(random.choice(characters) for _ in range(16))
-    
+    share_code = "".join(random.choice(characters) for _ in range(16))
+
     return share_code
+
+
+def get_best_time_from_slot(best_timeslot: int, start_date: date) -> datetime:
+    """
+    Converts the best time slot of a meeting into the datetime format
+
+    Each timeslot represents a 15 minute increment in a 9-5 day, so each day has
+    32 15 minute timeslots.
+
+    Example: if a meeting has best timeslot 65, and starts on May 1st, the best
+    time will start on May 3rd, at 9:15
+
+    Args:
+        `best_timeslot (int)`: The timeslot containing the most avaliable users
+        for a meeting
+        `start_date (datetime)`: best starting date for a meeing
+
+    Returns:
+        `datetime`: The best date and time for an even
+    """
+    if best_timeslot is None:
+        best_timeslot = 0
+    best_days = best_timeslot // 32
+    best_slot = best_timeslot % 32
+    best_time = datetime.combine(start_date, datetime.min.time())
+    best_time = best_time.replace(hour=9, minute=0)
+    print(best_time.strftime("%d %m %H:%M"))
+    best_time += timedelta(days=best_days, minutes=15 * best_slot)
+    return best_time
+
+
+def format_meetings(
+    meetings: list[Meeting],
+) -> tuple[list[tuple[datetime, Meeting]], list[tuple[datetime, Meeting]]]:
+    """
+    Breaks a list of meetings into present and past meetings,
+    and then sorts each in ascending order in terms of best times
+    for current activities, and descending order in terms of past activities
+
+    Args:
+        meetings (list[Meeting]): A list of meetings that we would like to
+        format
+
+    Returns:
+        tuple[list[tuple[datetime, Meeting]], list[tuple[datetime, Meeting]]]:
+        A tuple with the first list containing current meetings, and the second
+        list containing past meetings.
+
+        Each list stores the meeting in a tuple in the form of
+        (best_time, meeting)
+    """
+    current_activities = []
+    past_activities = []
+    current_date = date.today()
+    for meeting in meetings:
+        if meeting.end_date < current_date:  # type: ignore
+            past_activities.append((get_best_time_from_slot(meeting.best_timeslot, meeting.start_date), meeting))  # type: ignore
+        else:
+            current_activities.append((get_best_time_from_slot(meeting.best_timeslot, meeting.start_date), meeting))  # type: ignore
+    current_activities.sort(key=lambda item: item[0])
+    past_activities.sort(key=lambda item: item[0], reverse=True)
+    return (current_activities, past_activities)

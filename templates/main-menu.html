@@ -5,6 +5,7 @@
   <title>Main Menu</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/common.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/mainmenu.css') }}">
+  <script src="{{ url_for('static', filename='javascript/meeting-popup.js') }}"></script>
 </head>
 <body class="main-background">
 
@@ -16,10 +17,38 @@
       </a>
     </div>
     <div class="navbar-right">
-      <a href="/meeting/join" class="button button-orange">Use Share Code</a>
+      <div class="share-dropdown">
+        <button class="btn btn-primary dropdown-trigger">Use Share Code</button>
+      
+        <div class="share-menu">
+          <div class="share-menu-header">
+            <span>Have a code?</span>
+            <button class="share-close" aria-label="Close">×</button>
+          </div>
+          <p>Enter the share code to import a shared activity:</p>
+          <form method="POST" class="share-form">
+            {{ form.hidden_tag() }}
+
+            {{ form.code(class= "share-code-input", placeholder = "ABC123", id = "code") }}
+            <p id="error" class="warning"></p>
+            <button id="show-details" class="btn btn-primary">Show Details</button>
+
+            <div id="popup" class="popup">
+              <div class="popup-content">
+                <h2 id="meeting-name"></h2>
+                <p id="meeting-description">This is a simple pop-up using HTML and CSS.</p>
+                <p><span id="start-date"></span> to <span id="end-date"></span></p>
+                {{ form.submit(class= "btn btn-primary import-btn") }}
+              </div>
+
+            </div>
+          </form>
+        </div>
+      </div>
       <a href="{{ url_for('create_meeting') }}" class="button button-orange">+ New Activity</a>
     </div>
   </nav>
+  
 
 
   <main class="main-content">
@@ -33,16 +62,18 @@
           <thead>
             <tr>
               <th>Activity</th>
-              <th>When</th>
-              <th>Time</th>
+              <th>End Date</th>
+              <th>Best Time</th>
+              <th>Share Code</th>
             </tr>
           </thead>
           <tbody>
             {% for activity in created_activities %}
               <tr>
-                <td>{{ activity.meeting_name }}</td>
-                <td>{{ activity.start_date.strftime('%d %B %Y') }}</td>
-                <td>10:00 AM</td>  {# Optional: replace with activity.time if available #}
+                <td>{{ activity[1].meeting_name }}</td>
+                <td>{{ activity[1].end_date.strftime('%d %B %Y') }}</td>
+                <td>{{ activity[0].strftime("%d %B %H:%M") }}</td> {# Optional: replace with activity.time if available #}
+                <td>{{ activity[1].share_code }}</td>
               </tr>
             {% else %}
               <tr>
@@ -62,25 +93,24 @@
           <thead>
             <tr>
               <th>Activity</th>
-              <th>When</th>
-              <th>Time</th>
+              <th>End Date</th>
+              <th>Best Time</th>
+              <th>Share Code</th>
             </tr>
           </thead>
           <tbody>
-
-            {% if past_activities %}
-              {% for activity in past_activities %}
-                <tr>
-                  <td>{{ activity.meeting_name }}</td>
-                  <td>{{ activity.start_date.strftime('%d %B %Y') }}</td>
-                  <td>10:00 AM</td>
-                </tr>
-              {% endfor %}
-            {% else %}
-              <tr>
-                <td colspan="3">No past activities.</td>
+            {% for activity in past_activities %}
+            <tr>
+              <td>{{ activity[1].meeting_name }}</td>
+              <td>{{ activity[1].end_date.strftime('%d %B %Y') }}</td>
+              <td>{{ activity[0].strftime("%d %B %H:%M") }}</td> {# Optional: replace with activity.time if available #}
+              <td>{{ activity[1].share_code }}</td>
               </tr>
-            {% endif %}
+            {% else %}
+            <tr>
+              <td colspan="3">No past activities.</td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>
