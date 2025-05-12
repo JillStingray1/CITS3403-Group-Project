@@ -95,4 +95,4 @@ def init_user_routes(app, db, bcrypt):
         Logout a user. Redirects to the index page.
         """
         clear_login_session()
-        return redirect(url_for("index")), 200
+        return render_template("index.html"), 200
