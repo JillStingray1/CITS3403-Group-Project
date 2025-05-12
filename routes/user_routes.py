@@ -70,6 +70,8 @@ def init_user_routes(app, db, bcrypt):
             On failure, returns a JSON object with an error message and 400.
 
         """
+        if "user_id" in session:
+            return redirect(url_for("main_menu"))
         form = LoginForm()
         if form.validate_on_submit():
             # Password and Username cannot be null since they have the data required validator
@@ -84,8 +86,8 @@ def init_user_routes(app, db, bcrypt):
             return render_template("login.html", form=form, error="Incorrect Password.")
 
             # setting the session variables to the current user
-
         return render_template("login.html", form=form, error=None)
+
     @app.route('/user/logout', methods=['GET'])
     @secure   
     def logout_user():
@@ -93,4 +95,4 @@ def init_user_routes(app, db, bcrypt):
         Logout a user. Redirects to the index page.
         """
         clear_login_session()
-        return redirect(url_for("static", filename="index.html")), 200
+        return redirect(url_for("index")), 200
