@@ -9,6 +9,6 @@ def secure(f):
     @wraps(f)
     def check_login(*args, **kwargs):
         if 'logged_in' not in session or not session['logged_in']:
-            return redirect(url_for('static', filename='index.html'))
+            return redirect(url_for("index"))
         return f(*args, **kwargs)
     return check_login

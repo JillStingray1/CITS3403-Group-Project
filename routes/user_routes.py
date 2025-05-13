@@ -7,9 +7,9 @@ from flask import (
     render_template,
 )
 from models.Models import User
-from tools import validate_username, validate_password, save_login_session, clear_login_session
+from tools import save_login_session, clear_login_session
 from middleware.middleware import secure
-from forms.sign_up import SignUpForm
+from forms import LoginForm, SignUpForm
 
 
 def init_user_routes(app, db, bcrypt):
@@ -60,42 +60,33 @@ def init_user_routes(app, db, bcrypt):
             return redirect("/main-menu")  # redirect to the main menu page after signup
         return render_template("sign-up.html", form=form, is_username_valid=True)
 
-    @app.route("/main-menu")
-    def main_menu():
-        """
-        Serves the main menu, currently a stub function for testing purposes
-        """
-        return redirect("/")
-
     @app.route("/user/login", methods=["GET", "POST"])
-    def login_user():
+    def login():
         """
-        login a user.
-
-        Args:
-            JSON { username: 'username', password: 'password'}
+        Renders the login template and redirects to other menus
 
         Returns:
-            On success, redirects to the main menu page adds user to session.
+            On success, redirects to the main menu page and adds user to session.
             On failure, returns a JSON object with an error message and 400.
+
         """
-        if 'logged_in' in session and session['logged_in']:
-            return redirect(url_for('static', filename='main-menu.html'))
+        if "user_id" in session:
+            return redirect(url_for("main_menu"))
+        form = LoginForm()
+        if form.validate_on_submit():
+            # Password and Username cannot be null since they have the data required validator
+            username = form.username.data
+            user = User.query.filter(User.username == username).first()
+            if user is None:
+                return render_template("login.html", form=form, error="User does not exist.")
+            password = form.password.data
+            if bcrypt.check_password_hash(user.password_hash, password):
+                save_login_session(user)
+                return redirect("/main-menu")
+            return render_template("login.html", form=form, error="Incorrect Password.")
 
-        data = request.get_json()
-        username = data.get('username')
-        is_user = User.query.filter(User.username == username).first()
-        if is_user is None:
-            return jsonify({"error": "user not found"}), 400
-        else: 
-            password = data.get('password')
-            if bcrypt.check_password_hash( is_user.password_hash, password):
-
-                save_login_session(is_user)
-
-                return redirect(url_for('static', filename='main-menu.html')), 200 # redirect to the main menu page after successful login
-            else:
-                return jsonify({"error": "Invalid password"}), 400
+            # setting the session variables to the current user
+        return render_template("login.html", form=form, error=None)
 
     @app.route('/user/logout', methods=['GET'])
     @secure   
@@ -104,4 +95,4 @@ def init_user_routes(app, db, bcrypt):
         Logout a user. Redirects to the index page.
         """
         clear_login_session()
-        return redirect(url_for("static", filename="index.html")), 200
+        return render_template("index.html"), 200

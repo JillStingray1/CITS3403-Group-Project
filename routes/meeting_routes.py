@@ -1,11 +1,21 @@
-from flask import Flask, session, request, jsonify, redirect, url_for
+from flask import Flask, session, request, jsonify, redirect, url_for, render_template
 from models.Models import User, Meeting, Timeslot
-from tools import validate_username, validate_password, save_login_session, clear_login_session, generate_share_code
+from tools import (
+    validate_username,
+    validate_password,
+    save_login_session,
+    clear_login_session,
+    generate_share_code,
+    format_meetings,
+)
 from middleware.middleware import secure
-from datetime import date, datetime
+from datetime import date
+from forms import meetingCreationForm, ShareCodeForm
+from models.Meeting import Meeting
+from models.Association import association_table
 
-    #TODO: add a migration to add a new column to the meeting table to store the current most effective timeslot. this should be calculated each time a timeslot is added or removed. change the add_to_timeslot function to update this column. 
-    
+# TODO: add a migration to add a new column to the meeting table to store the current most effective timeslot. this should be calculated each time a timeslot is added or removed. change the add_to_timeslot function to update this column.
+
 def get_timeslots(Meeting):
 
     timeslots = Meeting.timeslots
@@ -18,51 +28,45 @@ def get_timeslots(Meeting):
             "unavailable_users": [user.username for user in timeslot.unavailable_users]
         })
     return timeslot_list
-    
 
 
 def init_meeting_routes(app, db):
-    @app.route('/meeting', methods=['POST'])
+    @app.route('/meeting/create', methods=["GET","POST"])
     @secure
     def create_meeting():
         """
-        Create a new meeting. Expects JSON as { start_date: 'YYYY-MM-DD', end_date: 'YYYY-MM-DD',
-        meeting_length: int%15=0, meeting_name: 'meeting_name', meeting_description: 'meeting_description' }
+        Renders the meeting creation template and redirects to other menus
         """
-        data = request.get_json()
-        print(data)
-        parsed_start_date = datetime.strptime(data.get("start_date"), "%Y-%m-%d").date()
-        parsed_end_date = datetime.strptime(data.get("end_date"), "%Y-%m-%d").date()
-        
-        if parsed_start_date > parsed_end_date:
-            return jsonify({"error": "Start date must be before end date"}), 400
-        
-        if data.get("meeting_length") % 15 != 0:
-            return jsonify({"error": "Meeting length must be divisible by 15"}), 400
-        
-        
-        new_meeting = Meeting(start_date=parsed_start_date,
+
+        form = meetingCreationForm()
+        if form.validate_on_submit():
+            parsed_start_date = form.start_date.data
+            parsed_end_date = form.end_date.data
+
+            new_meeting = Meeting(start_date=parsed_start_date,
                             end_date=parsed_end_date,
-                            meeting_length=data.get("meeting_length"),
-                            meeting_name=data.get("meeting_name"),
-                            meeting_description=data.get("meeting_description"),
+                            meeting_length=form.meeting_length.data,
+                            meeting_name=form.meeting_name.data,
+                            meeting_description=form.meeting_description.data,
                             share_code=generate_share_code()
                             )
-        
-        db.session.add(new_meeting)
-        db.session.commit()
-        new_meeting.users.append(User.query.get(session['user_id']))
 
-
-        amount_days = (parsed_end_date - parsed_start_date).days + 1
-        for i in range(amount_days * 32):
-            new_timeslot = Timeslot(order=i, meeting_id=new_meeting.id)
-            db.session.add(new_timeslot)
+            db.session.add(new_meeting)
             db.session.commit()
-        
-        session['meeting_id'] = new_meeting.id
-        return redirect(url_for('static', filename='date-selector.html')), 200
-    
+            new_meeting.users.append(User.query.get(session['user_id']))
+
+            amount_days = (parsed_end_date - parsed_start_date).days + 1
+            for i in range(amount_days * 32):
+                new_timeslot = Timeslot(order=i, meeting_id=new_meeting.id)
+                db.session.add(new_timeslot)
+                db.session.commit()
+
+            session['meeting_id'] = new_meeting.id
+            return redirect("/availability-selection.html")  # redirect to the date selection page after creating the meeting
+        else: 
+            # If the form is not valid, render the form again with errors
+            return render_template("activity-create.html", form=form)
+
     @app.route('/meeting/all', methods=['GET'])
     @secure
     def get_all_meetings():
@@ -73,7 +77,7 @@ def init_meeting_routes(app, db):
         user_meetings = user.meetings
         meeting_list = []
         for meeting in user_meetings:
-            
+
             best_timeslot = meeting.best_timeslot if meeting.best_timeslot else 0
             meeting_list.append({
                 "id": meeting.id,
@@ -86,9 +90,9 @@ def init_meeting_routes(app, db):
                 "best_timeslot": best_timeslot
               
             })
-        
+
         return jsonify(meeting_list), 200
-    
+
     @app.route('/meeting', methods=['GET'])
     @secure
     def get_current_meeting():
@@ -98,7 +102,7 @@ def init_meeting_routes(app, db):
         meeting = Meeting.query.get(session['meeting_id'])
         if not meeting:
             return jsonify({"error": "Meeting not found"}), 404
-        
+
         timeslot_list = get_timeslots(meeting)
 
         best_timeslot = meeting.best_timeslot if meeting.best_timeslot else 0
@@ -114,8 +118,7 @@ def init_meeting_routes(app, db):
             "best_timeslot": best_timeslot,
             "timeslots": timeslot_list
         }), 200
-    
- 
+
     @app.route('/meeting/<int:meeting_id>', methods=['GET'])
     @secure 
     def get_meeting(meeting_id):
@@ -125,7 +128,7 @@ def init_meeting_routes(app, db):
         meeting = Meeting.query.get(meeting_id)
         if not meeting:
             return jsonify({"error": "Meeting not found"}), 404
-        
+
         timeslot_list = get_timeslots(meeting)
         best_timeslot = meeting.best_timeslot if meeting.best_timeslot else 0
 
@@ -140,7 +143,7 @@ def init_meeting_routes(app, db):
             "best_timeslot": best_timeslot,
             "timeslots": timeslot_list
         }), 200
-    
+
     @app.route('/meeting/timeslot', methods=['POST'])
     @secure
     def add_to_timeslot():
@@ -148,21 +151,21 @@ def init_meeting_routes(app, db):
         Add a user to a timeslot. Expects JSON as { timeslots: [{timeslot_id: int}] }
         """
         data = request.get_json()
-        
+
         user = User.query.get(session['user_id'])
         if not user:
             return jsonify({"error": "User not found"}), 404
-        
+
         meeting = Meeting.query.get(session['meeting_id'])
         if user not in meeting.users:
             return jsonify({"error": "User not part of the meeting"}), 403
-        
+
         timeslot_entries = data.get("timeslots", [])
 
         for entry in timeslot_entries:
             timeslot_id = entry.get("timeslot_id")
             timeslot = Timeslot.query.get(timeslot_id)
-    
+
             if not timeslot:
                 return jsonify({"error": f"Timeslot with ID {timeslot_id} not found"}), 404
 
@@ -174,7 +177,6 @@ def init_meeting_routes(app, db):
 
         timeslots = get_timeslots(meeting)
         sorted_timeslots = sorted(timeslots, key=lambda x: x["order"]) # sort the timeslots by order
-
 
         dict_order = {}
 
@@ -189,7 +191,7 @@ def init_meeting_routes(app, db):
                     total_unavailable += len(next_slot["unavailable_users"])
                 else:
                     break
-                 
+
             # Save the total sum into dict_order
             dict_order[current_slot["order"]] = total_unavailable
 
@@ -198,7 +200,6 @@ def init_meeting_routes(app, db):
         db.session.commit()
 
         return jsonify({"message": "User added to timeslot(s)"}), 200
-    
 
     @app.route('/meeting/code', methods=['POST'])
     @secure
@@ -208,18 +209,74 @@ def init_meeting_routes(app, db):
         """
         data = request.get_json()
         share_code = data.get("share_code")
-        
+
         meeting = Meeting.query.filter_by(share_code=share_code).first()
-        
+
         if not meeting:
             return jsonify({"error": "Meeting not found"}), 404
-        
+
         user = User.query.get(session['user_id'])
-        
+
         if user in meeting.users:
             return jsonify({"error": "User already in meeting"}), 400
-        
+
         meeting.users.append(user)
         db.session.commit()
-        
+
         return jsonify({"message": "User added to meeting"}), 200
+
+    @app.route("/main-menu", methods=["GET", "POST"])
+    @secure
+    def main_menu():
+        """
+        Loads the main menu template, which has a list of user's meetings and
+        handles sharing using share codes
+
+        Returns:
+            The rendered main menu template by default, or if there is an
+            error. Reloads the page if sharing successful
+        """
+        meetings = Meeting.query.join(association_table).filter(association_table.c.user_id == session["user_id"]).all()
+        current_activities, past_activities = format_meetings(meetings)
+        form = ShareCodeForm()
+        if form.validate_on_submit():
+            user = User.query.get(session["user_id"])
+            meeting = Meeting.query.filter_by(share_code=form.code.data).first()
+            if not meeting or user in meeting.users:
+                return render_template(
+                    "main-menu.html",
+                    created_activities=meetings,
+                    form=form,
+                    error="Something went wrong with the share code",
+                )
+            meeting.users.append(user)
+            db.session.commit()
+            return redirect(url_for("main_menu"))
+        return render_template(
+            "main-menu.html", created_activities=current_activities, past_activities=past_activities, form=form
+        )
+
+    @app.route("/meeting/code/<share_code>", methods=["GET"])
+    @secure
+    def get_meeting_by_code(share_code):
+        """
+        Get a meeting by ID. Returns JSON with meeting details. 
+        This is used for ajax in the main menu
+        """
+        meeting = Meeting.query.filter_by(share_code=share_code).first()
+        if not meeting:
+            return jsonify({"error": "Meeting not found"}), 403
+        if User.query.get(session["user_id"]) in meeting.users:
+            return jsonify({"error": "You are already in this meeting"}), 403
+        return (
+            jsonify(
+                {
+                    "start_date": meeting.start_date.strftime("%Y %B %d"),
+                    "end_date": meeting.end_date.strftime("%Y %B %d"),
+                    "meeting_length": meeting.meeting_length,
+                    "meeting_name": meeting.meeting_name,
+                    "meeting_description": meeting.meeting_description,
+                }
+            ),
+            200,
+        )
