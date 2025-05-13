@@ -6,6 +6,7 @@ from sqlalchemy import Date
 import random
 import string
 from models.Meeting import Meeting
+from typing import List, Tuple
 
 
 def validate_password(password: str) -> bool:
@@ -144,3 +145,33 @@ def format_meetings(
     current_activities.sort(key=lambda item: item[0])
     past_activities.sort(key=lambda item: item[0], reverse=True)
     return (current_activities, past_activities)
+
+
+def find_best_timeslot_windows(meeting: Meeting, window_size: int, top_k: int = 10
+    ) -> List[Tuple[int, int]]:
+    """
+    Scans the meeting’s timeslots in order, summing unavailable_users over 
+    each contiguous window of size `window_size`, and returns the top_k
+    windows (order index, total_unavailable), sorted by fewest unavailable.
+    """
+    # pull out each slot’s order and its unavailable count
+    slots = sorted(
+        meeting.timeslots, 
+        key=lambda ts: ts.order
+    )
+    orders = [ts.order for ts in slots]
+    unavail_counts = [len(ts.unavailable_users) for ts in slots]
+
+    scores = {}
+    for i, base_order in enumerate(orders):
+        running = 0
+        for j in range(window_size):
+            if i + j < len(unavail_counts):
+                running += unavail_counts[i + j]
+            else:
+                break
+        scores[base_order] = running
+
+    # pick the top_k windows with smallest total_unavailable
+    best = sorted(scores.items(), key=lambda kv: kv[1])[:top_k]
+    return best

@@ -1,90 +1,73 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const ctx = document.getElementById('popular-times-chart').getContext('2d');
-
-  // create the empty horizontal bar chart
-  window.popularTimesChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: [],        // will be populated dynamically
-      datasets: [{
-        label: 'Users',
-        data: [],
-        backgroundColor: 'rgba(79, 133, 229, 1)',
-        barPercentage: 0.6,
-        categoryPercentage: 0.7
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      scales: {
-        x: {
-          beginAtZero: true,
-          grid: { display: false },
-          ticks: { stepSize: 1 }
-        },
-        y: {
-          grid: { display: false }
-        }
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: { enabled: true }
-      }
-    }
-  });
-
-  // load data once on startup
-  loadPopularTimes();
-
-  // if you have a week‐selector dropdown later:
-  const sel = document.getElementById('week-selector');
-  if (sel) {
-    sel.addEventListener('change', e => loadPopularTimes(e.target.value));
-  }
-});
+// static/javascript/analysis.js
 
 /**
- * Fetches raw stats from the server, picks the Top-3 free slots,
- * and calls renderPopularTimesChart().
+ * Converts a timeslot order (15-min ticks from 9am Day 0) into a JS Date.
+ * Mirrors tool.py get_best_time_from_slot.
  *
- * @param {string=} weekFilter  unused for now—if you add per-week data
+ * @param {number} order  the timeslot index (0 = Day 0 @ 9:00, 1 = 9:15, …)
+ * @param {Date}   start the meeting’s start_date as a JS Date
+ * @returns {Date} the absolute date/time
  */
-async function loadPopularTimes(weekFilter = null) {
-  try {
-    const resp = await fetch(`/meeting/${MEETING_ID}/stats`);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const { total_users, timeslots, start_date } = await resp.json();
-
-    // compute availability = total_users – unavailable.length per slot
-    const availBySlot = timeslots.map(ts => ({
-      order:       ts.order,
-      available:   total_users - ts.unavailable.length
-    }));
-
-    // sort descending and pick top 3
-    availBySlot.sort((a, b) => b.available - a.available);
-    const top3 = availBySlot.slice(0, 3);
-
-    // build labels like “8 – 10 AM” from ts.order if you know your mapping:
-    // here’s a simple example assuming slot 0 = “8 – 9 AM”, slot 1 = “9 – 10 AM”, etc.
-    const slotLabels = top3.map(s => {
-      const startHour = 8 + s.order;
-      const endHour   = startHour + 1;
-      return `${startHour} – ${endHour} AM`;
-    });
-    const dataPoints = top3.map(s => s.available);
-
-    renderPopularTimesChart(slotLabels, dataPoints);
-  } catch (e) {
-    console.error("Failed to load popular times:", e);
-  }
+function getBestTimeFromSlot(order, start) {
+  // floor(order / 32) days after start
+  const daysOffset = Math.floor(order / 32);
+  // remainder * 15 minutes after 9am
+  const slotOffset = order % 32;
+  const dt = new Date(start);
+  dt.setHours(9, 0, 0, 0);
+  dt.setDate(dt.getDate() + daysOffset);
+  dt.setMinutes(dt.getMinutes() + slotOffset * 15);
+  return dt;
 }
 
 /**
- * Updates the chart’s labels & data and re-draws it.
+ * Fetches all timeslot data + meeting meta, computes the top-3
+ * “most-available” windows, and re-renders your horizontal bar chart.
  */
-function renderPopularTimesChart(newLabels, newData) {
-  popularTimesChart.data.labels            = newLabels;
-  popularTimesChart.data.datasets[0].data  = newData;
-  popularTimesChart.update();
+async function loadAndRenderStats(meetingId) {
+  // 1) Fetch timeslots and meta
+  const [tsResp, metaResp] = await Promise.all([
+    fetch(`/meeting/${meetingId}/all`),
+    fetch(`/meeting/${meetingId}`)
+  ]);
+  const timeslots = await tsResp.json();       // [{ order, unavailable_users: [...] }, …]
+  const { start_date, meeting_length, participants_count } = await metaResp.json();
+
+  // 2) Prep
+  const slotsNeeded = meeting_length / 15;
+  const sorted      = [...timeslots].sort((a, b) => a.order - b.order);
+
+  // 3) Slide a window of size slotsNeeded, summing unavailable counts
+  const windowScores = [];
+  for (let i = 0; i + slotsNeeded <= sorted.length; i++) {
+    let sumUnavailable = 0;
+    for (let j = 0; j < slotsNeeded; j++) {
+      sumUnavailable += sorted[i + j].unavailable_users.length;
+    }
+    windowScores.push({ startOrder: sorted[i].order, totalUnavailable: sumUnavailable });
+  }
+
+  // 4) Find the top-10 windows with the fewest unavailable users
+  windowScores.sort((a, b) => a.totalUnavailable - b.totalUnavailable);
+  const top10 = windowScores.slice(0, 10);
+
+  // 5) Turn them into human-readable labels & data points
+  const labels = top10.map(w => {
+    const startDT = getBestTimeFromSlot(w.startOrder, new Date(start_date));
+    const endDT   = getBestTimeFromSlot(w.startOrder + slotsNeeded, new Date(start_date));
+    const fmt = d => d.toLocaleDateString('default',{ day:'numeric', month:'short' });
+    return `${fmt(startDT)} – ${fmt(endDT)}`;
+  });
+  const data = top10.map(w => participants_count - w.totalUnavailable);
+
+  // 6) Re-render your Chart.js bar chart
+  renderPopularTimesChart(labels, data);
 }
+
+
+// ─── initialize on page load ──────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // first render with static example (optional), then load real data
+  // renderPopularTimesChart(['13 May – 17 May','…','…'], [6,8,4]);
+  loadAndRenderStats(meetingId);
+});

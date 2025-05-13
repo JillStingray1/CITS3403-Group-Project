@@ -1,4 +1,4 @@
-from flask import Flask, session, request, jsonify, redirect, url_for, render_template, Blueprint
+from flask import Flask, session, request, jsonify, redirect, url_for, render_template, flash
 from models.Models import User, Meeting, Timeslot
 from tools import (
     validate_username,
@@ -9,33 +9,13 @@ from tools import (
     format_meetings,
 )
 from middleware.middleware import secure
-from datetime import date
+from datetime import date, timedelta
 from forms import meetingCreationForm, ShareCodeForm
 from models.Meeting import Meeting
 from models.Association import association_table
 from models.User import User
-from models.User_timeslot import UserTimeslot
 
 # TODO: add a migration to add a new column to the meeting table to store the current most effective timeslot. this should be calculated each time a timeslot is added or removed. change the add_to_timeslot function to update this column.
-meeting_bp = Blueprint('meeting', __name__)
-
-@meeting_bp.route('/meeting/<int:meeting_id>/stats', methods=['GET'])
-def meeting_stats(meeting_id):
-    meeting = Meeting.query.get_or_404(meeting_id)
-    # build raw timeslot info
-    raw = []
-    for ts in meeting.timeslots:  
-        raw.append({
-            "order": ts.order,
-            "unavailable": [u.user_id for u in ts.unavailable_users] 
-        })
-    return jsonify({
-        "start_date": meeting.start_date.isoformat(),
-        "end_date":   meeting.end_date.isoformat(),
-        "meeting_length": meeting.meeting_length,
-        "total_users": len(meeting.users),
-        "timeslots":  raw
-    })
 
 def get_timeslots(Meeting):
 
@@ -301,3 +281,17 @@ def init_meeting_routes(app, db):
             ),
             200,
         )
+    
+    @app.route('/analysis')
+    @secure
+    def analysis_page():
+        meeting = Meeting.query.get(session['meeting_id'])
+        if not meeting:
+            flash("Please create or select a meeting first.", "warning")
+            return redirect(url_for('main_menu'))
+
+        # (optionally pre‐compute any stats server‐side here, or just let your JS fetch /meeting/stats)
+        return render_template('analysis.html',
+                                meeting=meeting
+                                #, stats_data=some_python_data
+                            )
