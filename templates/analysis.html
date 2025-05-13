@@ -19,6 +19,13 @@
 
   <!-- Chart.js for the bar chart -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+
+  {# expose the current meeting_id to the page JS #}
+  <script type="text/javascript">
+    // available to analysis.js as a global
+    const MEETING_ID = "{{ meeting.id }}";
+  </script>
+
   <!-- Page logic -->
   <script
     src="{{ url_for('static', filename='javascript/analysis.js') }}"
