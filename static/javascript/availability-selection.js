@@ -105,7 +105,7 @@ document.querySelector("#submit-button").addEventListener("click", () => {
 
     let base_url = window.location.origin
 
-    fetch(`${base_url}/submit-availability/${meetingId}`, {
+    fetch(`${base_url}/submit-availability`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

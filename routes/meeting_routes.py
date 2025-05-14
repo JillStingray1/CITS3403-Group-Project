@@ -300,12 +300,13 @@ def init_meeting_routes(app, db):
             200,
         )
 
-    @app.route("/submit-availability/<meeting_id>", methods=["POST"])
+    @app.route("/submit-availability", methods=["POST"])
     @secure
-    def submit_availability(meeting_id):
+    def submit_availability():
         if "user_id" not in session:
             print("User not logged in")
             return jsonify({"error": "User not logged in"}), 401
+        meeting_id = session["meeting_id"]
 
         data = request.get_json()
         print("Incoming data:", data)
