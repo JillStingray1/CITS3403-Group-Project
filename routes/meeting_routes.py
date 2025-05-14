@@ -308,8 +308,5 @@ def init_meeting_routes(app, db):
     @app.route("/availability-selection")
     @secure
     def availability_selection():
-        meeting = Meeting.query.get(session["meeting_id"])
-        if not meeting:
-            return jsonify({"error": "Meeting not found"}), 404
-
-        return render_template("availability-selection.html", meeting=meeting)
+        
+        return render_template("availability-selection.html")
