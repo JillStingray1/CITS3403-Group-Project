@@ -280,3 +280,84 @@ def init_meeting_routes(app, db):
             ),
             200,
         )
+    @app.route("/submit-availability", methods=["POST"])
+    @secure
+    def submit_availability():
+        if 'user_id' not in session:
+            print("User not logged in")
+            return jsonify({"error": "User not logged in"}), 401
+        
+        data = request.get_json()
+        print("Incoming data:", data)
+        slots = data.get("slots", [])
+        print("Extracted slots:", slots)
+        meeting_id = session['meeting_id']
+        print("Meeting ID:", meeting_id)
+        
+        if not meeting_id:
+            print("Missing meeting ID")
+            return jsonify({"error": "Missing meeting ID"}), 400
+            
+        meeting = Meeting.query.get(meeting_id)
+        if not meeting:
+            print("Meeting not found")
+            return jsonify({"error": "Meeting not found"}), 404
+
+               
+
+
+        data = request.get_json()
+        slots = data.get("slots", [])
+        meeting_id = request.args.get("meeting_id", type=int)
+
+        if not meeting_id:
+            return jsonify({"error": "Missing meeting ID"}), 400
+
+        meeting = Meeting.query.get(meeting_id)
+        if not meeting:
+            return jsonify({"error": "Meeting not found"}), 404
+        
+        user = User.query.get(session['user_id'])
+
+        for slot in slots:
+            date_str = slot.get("date")
+            time_str = slot.get("time")
+
+            # Parse date and time
+            try:
+                date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+                time_obj = datetime.strptime(time_str, "%H:%M").time()
+            except Exception:
+                return jsonify({"error": f"Invalid date/time: {slot}"}), 400
+
+            # Compute a unique order value for the timeslot (e.g., days since start * slots per day + index)
+            days_since_start = (date_obj - meeting.start_date.date()).days
+            minutes_since_9am = (time_obj.hour - 9) * 60 + time_obj.minute
+            slot_index = minutes_since_9am // 15  # 15-min slots
+            order = days_since_start * 32 + slot_index
+            print(f"date_obj: {date_obj} (type: {type(date_obj)})")
+            print(f"meeting.start_date: {meeting.start_date} (type: {type(meeting.start_date)})")
+
+
+            # Find or create the timeslot
+            timeslot = Timeslot.query.filter_by(order=order, meeting_id=meeting.id).first()
+            if not timeslot:
+                timeslot = Timeslot(order=order, meeting_id=meeting.id)
+                db.session.add(timeslot)
+
+            
+            if user not in timeslot.unavailable_users:
+                timeslot.unavailable_users.append(user)
+
+        db.session.commit()
+        return jsonify({"success": True}), 200     
+
+    @app.route("/availability-selection")
+    @secure
+    def availability_selection():
+        meeting = Meeting.query.get(session['meeting_id'])
+        if not meeting:
+            return jsonify({"error": "Meeting not found"}), 404
+        
+        return render_template("availability-selection.html", meeting=meeting)
+   
