@@ -9,7 +9,7 @@ from tools import (
     format_meetings,
 )
 from middleware.middleware import secure
-from datetime import date
+from datetime import date, datetime
 from forms import meetingCreationForm, ShareCodeForm
 from models.Meeting import Meeting
 from models.Association import association_table
@@ -335,7 +335,7 @@ def init_meeting_routes(app, db):
                 return jsonify({"error": f"Invalid date/time: {slot}"}), 400
 
             # Compute a unique order value for the timeslot (e.g., days since start * slots per day + index)
-            days_since_start = (date_obj - meeting.start_date.date()).days
+            days_since_start = (date_obj - meeting.start_date).days
             minutes_since_9am = (time_obj.hour - 9) * 60 + time_obj.minute
             slot_index = minutes_since_9am // 15  # 15-min slots
             order = days_since_start * 32 + slot_index
