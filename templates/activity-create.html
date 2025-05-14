@@ -11,7 +11,7 @@
 <body>
   <nav class="navbar">
     <div class="navbar-right">
-      <a href="index.html" class="logo-link">
+      <a href="/" class="logo-link">
         <img src="{{ url_for('static', filename='media/app-logo.png') }}" alt="App Logo" class="logo-nav" />
       </a>
     </div>
@@ -65,7 +65,7 @@
           </form>
         </div>
 
-      <p class="back-link"><a href="main-menu.html">← Back to Home</a></p>
+      <p class="back-link"><a href="{{url_for('main_menu')}}">← Back to Home</a></p>
     </div>
   </div>
 

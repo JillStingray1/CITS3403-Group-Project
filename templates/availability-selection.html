@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Availability Selection</title>
+  <script>let csrf = "{{csrf_token()}}"</script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/common.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/availability-selection.css') }}">
+</head>
+<body class="availability-page">
+  <div class="top-bar">
+    <a href="{{ url_for('create_meeting') }}" class="back-button">← Back</a>
+    <h1>Select Your Availability</h1>
+  </div>
+
+  <main class="calendar-container">
+    <div class="calendar-header">
+      <button id="prev-day" class="day-button">◀</button>
+      <span id="current-date"></span>
+      <button id="next-day" class="day-button">▶</button>
+    </div>
+
+    <div class="calendar-grid" id="calendar-grid">
+
+  
+    </div>
+  </main>
+
+  
+  <script src="{{ url_for('static', filename='javascript/availability-selection.js') }}"></script>
+</body>
+</html>
