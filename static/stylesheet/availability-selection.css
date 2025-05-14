@@ -4,6 +4,13 @@ body {
   background-color: #fdf9d8;
 }
 
+.time-slot.available {
+  background-color: green;
+}
+.time-slot.unavailable {
+  background-color: red;
+}
+
 .top-bar {
   background-color: #a8bdb0;
   height: 64px;
@@ -41,6 +48,7 @@ body {
 
 .calendar-grid {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   border: 1px solid #ccc;
   border-radius: 12px;
@@ -69,7 +77,7 @@ body {
 }
 
 .time-slot {
-  width: 200px;
+  width: 90%;
   height: 40px;
   border: 2px solid #ccc;
   border-radius: 8px;

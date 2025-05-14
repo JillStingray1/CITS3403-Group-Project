@@ -20,21 +20,13 @@
       <button id="next-day" class="day-button">▶</button>
     </div>
 
-    <div class="calendar-grid">
-      <div id="time-column" class="calendar-time-column"></div>
-      <div id="slots-column" class="calendar-slot-column"></div>
-    </div>
+    <div class="calendar-grid" id="calendar-grid">
 
-    <div class="submit-section">
-      <button id="submit-button" class="submit-btn">Submit Availability</button>
+  
     </div>
   </main>
 
-  <script>
-    const meetingId = "{{ meeting.id }}";
-    const startDate = "{{ meeting.start_date }}";
-    const endDate = "{{ meeting.end_date }}";
-  </script>
+  
   <script src="{{ url_for('static', filename='javascript/availability-selection.js') }}"></script>
 </body>
 </html>

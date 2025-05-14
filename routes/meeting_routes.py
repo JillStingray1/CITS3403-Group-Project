@@ -66,9 +66,8 @@ def init_meeting_routes(app, db):
                 db.session.commit()
 
             session["meeting_id"] = new_meeting.id
-            return redirect(
-                "/availability-selection.html"
-            )  # redirect to the date selection page after creating the meeting
+
+            return redirect(url_for('availability_selection')) # redirect to the date selection page after creating the meeting
         else:
             # If the form is not valid, render the form again with errors
             return render_template("activity-create.html", form=form)
@@ -126,6 +125,8 @@ def init_meeting_routes(app, db):
                     "share_code": meeting.share_code,
                     "best_timeslot": best_timeslot,
                     "timeslots": timeslot_list,
+                    "user_id": session["user_id"],
+                    "username":session["username"],
                 }
             ),
             200,
@@ -182,11 +183,15 @@ def init_meeting_routes(app, db):
         for entry in timeslot_entries:
             timeslot_id = entry.get("timeslot_id")
             timeslot = Timeslot.query.get(timeslot_id)
-
+            print(timeslot)
             if not timeslot:
                 return jsonify({"error": f"Timeslot with ID {timeslot_id} not found"}), 404
+            
+            if user in timeslot.unavailable_users:
+                timeslot.unavailable_users.remove(user)
 
-            timeslot.unavailable_users.append(user)
+            else:
+                timeslot.unavailable_users.append(user)
 
         db.session.commit()
 
