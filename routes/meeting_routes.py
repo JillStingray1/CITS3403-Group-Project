@@ -7,6 +7,7 @@ from tools import (
     clear_login_session,
     generate_share_code,
     format_meetings,
+    get_num_unavailable_per_timeslot,
 )
 from middleware.middleware import secure
 from datetime import date, timedelta
@@ -281,17 +282,20 @@ def init_meeting_routes(app, db):
             ),
             200,
         )
-    
+
     @app.route('/analysis')
     @secure
     def analysis_page():
         meeting = Meeting.query.get(session['meeting_id'])
+        timeslots = get_timeslots(meeting)
+        unavalibility_scores_list = list(get_num_unavailable_per_timeslot(timeslots, meeting.meeting_length).items())
+        unavalibility_scores_list.sort(key=lambda x: x[1])
+        top_scores = unavalibility_scores_list[:10]
+        print(top_scores)
+
         if not meeting:
             flash("Please create or select a meeting first.", "warning")
             return redirect(url_for('main_menu'))
 
         # (optionally pre‐compute any stats server‐side here, or just let your JS fetch /meeting/stats)
-        return render_template('analysis.html',
-                                meeting=meeting
-                                #, stats_data=some_python_data
-                            )
+        return render_template("analysis.html", meeting=meeting, top_scores=top_scores, start_date=meeting.start_date)
