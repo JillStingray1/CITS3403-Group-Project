@@ -1,150 +1,121 @@
-//! TODO: document functions in this javascript file
-const meeting_duration_minutes = 15; // <<<< Change this value manually if needed
+const selected_slots = [];
+const dateRange = generateDateRange(startDate, endDate);
+let currentDateIndex = 0;
 
+function generateDateRange(start, end) {
+  const result = [];
+  let current = new Date(start);
+  const endDate = new Date(end);
 
-const dates = generate_dates(3); // today + 2 more
-const formatted_dates = dates.map(date => format_date(date));
-
-const time_slots = [
-  "09:00", "09:15", "09:30", "09:45",
-  "10:00", "10:15", "10:30", "10:45",
-  "11:00", "11:15", "11:30", "11:45",
-  "12:00", "12:15", "12:30", "12:45",
-  "13:00", "13:15", "13:30", "13:45",
-  "14:00", "14:15", "14:30", "14:45",
-  "15:00", "15:15", "15:30", "15:45",
-  "16:00", "16:15", "16:30", "16:45"
-];
-
-let current_day_index = 0;
-let selected_slots = [];
-const slots_needed = Math.ceil(meeting_duration_minutes / 15);
-
-window.onload = () => {
-  render_calendar();
-  // update_selected_slots_display();
-
-  document.getElementById('prev-day').addEventListener('click', () => {
-    if (current_day_index > 0) {
-      current_day_index--;
-      render_calendar();
-      // update_selected_slots_display();
-    }
-  });
-
-  document.getElementById('next-day').addEventListener('click', () => {
-    if (current_day_index < dates.length - 1) {
-      current_day_index++;
-      render_calendar();
-      // update_selected_slots_display();
-    }
-  });
-
-  document.getElementById('slots-column').addEventListener('click', (event) => {
-    if (event.target.classList.contains('time-slot') && !event.target.classList.contains('disabled')) {
-      const clicked_slot = {
-        date: dates[current_day_index],
-        time: event.target.dataset.time
-      };
-
-      const index = selected_slots.findIndex(slot =>
-        slot.date === clicked_slot.date && slot.time === clicked_slot.time
-      );
-
-      if (index !== -1) {
-        selected_slots.splice(index, 1);
-        event.target.classList.remove('selected');
-      } else {
-        selected_slots.push(clicked_slot);
-        event.target.classList.add('selected');
-      }
-
-      // update_selected_slots_display();
-    }
-  });
-};
-
-function generate_dates(num_days) {
-  const today = new Date();
-  const generated_dates = [];
-  for (let i = 0; i < num_days; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    generated_dates.push(date.toISOString().split('T')[0]);
+  while (current <= endDate) {
+    result.push(new Date(current).toISOString().split('T')[0]);
+    current.setDate(current.getDate() + 1);
   }
-  return generated_dates;
+
+  return result;
 }
+
 
 function render_calendar() {
-  const time_col = document.getElementById('time-column');
-  const slots_col = document.getElementById('slots-column');
+  const time_column = document.getElementById("time-column");
+  const slots_column = document.getElementById("slots-column");
 
-  time_col.innerHTML = "";
-  slots_col.innerHTML = "";
+  time_column.innerHTML = "";
+  slots_column.innerHTML = "";
 
-  const latest_valid_slot_index = time_slots.length - slots_needed;
+  const dateStr = dateRange[currentDateIndex];
+  const dateDisplay = document.getElementById("current-date");
+  if (dateDisplay) {
+    dateDisplay.textContent = new Date(dateStr).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  }
+  document.getElementById("current-date").textContent = dateStr;
 
-  time_slots.forEach((time, index) => {
-    const time_label = document.createElement('div');
-    time_label.className = 'time-label';
-    time_label.textContent = time;
-    time_col.appendChild(time_label);
+  for (let hour = 9; hour < 17; hour++) {
+    for (let quarter = 0; quarter < 60; quarter += 15) {
+      const timeStr = `${String(hour).padStart(2, "0")}:${String(quarter).padStart(2, "0")}`;
 
-    const slot = document.createElement('div');
-    slot.className = 'time-slot';
-    slot.dataset.time = time;
+      const timeDiv = document.createElement("div");
+      timeDiv.className = "time-label";
+      timeDiv.textContent = timeStr;
 
-    if (index > latest_valid_slot_index) {
-      slot.classList.add('disabled');
+      const slotDiv = document.createElement("div");
+      slotDiv.className = "time-slot";
+      
+      const isSelected = selected_slots.some(
+        s => s.date === dateStr && s.time === timeStr
+      );
+      if (isSelected) {
+        slotDiv.classList.add("selected");
+      }
+
+
+      if (hour === 16 && quarter > 45) {
+        slotDiv.classList.add("disabled");
+        slotDiv.style.pointerEvents = "none";
+      }
+
+      slotDiv.addEventListener("click", () => {
+        if (slotDiv.classList.contains("disabled")) return;
+
+        slotDiv.classList.toggle("selected");
+
+        const index = selected_slots.findIndex(
+          s => s.date === dateStr && s.time === timeStr
+        );
+
+        if (index !== -1) {
+          selected_slots.splice(index, 1);
+        } else {
+          selected_slots.push({ date: dateStr, time: timeStr });
+        }
+      });
+
+      time_column.appendChild(timeDiv);
+      slots_column.appendChild(slotDiv);
     }
-
-    if (selected_slots.some(s => s.date === dates[current_day_index] && s.time === time)) {
-      slot.classList.add('selected');
-    }
-
-    slots_col.appendChild(slot);
-  });
-
-  document.getElementById('current-date').textContent = formatted_dates[current_day_index];
+  }
 }
 
-// function update_selected_slots_display() {
-//   const container = document.getElementById('selected-slots');
-//   if (selected_slots.length === 0) {
-//     container.textContent = "No slots selected";
-//   } else {
-//     container.innerHTML = "<strong>Selected Slots:</strong><br>" +
-//       selected_slots.map(slot => {
-//         const end_time = calculate_end_time(slot.time);
-//         return `- ${slot.time} → ${end_time} on ${format_date(slot.date)}`;
-//       }).join("<br>");
-//   }
-// }
+document.getElementById("prev-day").addEventListener("click", () => {
+  if (currentDateIndex > 0) {
+    currentDateIndex--;
+    render_calendar();
+  }
+});
 
-function calculate_end_time(start_time) {
-  const [hours, minutes] = start_time.split(':').map(Number);
-  const total_start_minutes = hours * 60 + minutes;
-  const total_end_minutes = total_start_minutes + meeting_duration_minutes;
-
-  const end_hours = Math.floor(total_end_minutes / 60);
-  const end_minutes = total_end_minutes % 60;
-
-  return `${String(end_hours).padStart(2, '0')}:${String(end_minutes).padStart(2, '0')}`;
-}
-
-function format_date(date_str) {
-  const date_obj = new Date(date_str);
-  const options = { year: 'numeric', month: 'short', day: 'numeric' };
-  return date_obj.toLocaleDateString('en-GB', options).replace(/ /g, ' ');
-}
+document.getElementById("next-day").addEventListener("click", () => {
+  if (currentDateIndex < dateRange.length - 1) {
+    currentDateIndex++;
+    render_calendar();
+  }
+});
 
 
-//! TODO: remove this, as we need to use serverside rendering to redirect
-document.querySelector('.submit-btn').addEventListener('click', () => {
+
+document.addEventListener("DOMContentLoaded", render_calendar);
+
+document.querySelector("#submit-button").addEventListener("click", () => {
   if (selected_slots.length === 0) {
     alert("Please select at least one slot before submitting!");
-  } else {
-    alert("Availability Submitted!");
-    window.location.href = "main-menu.html";
+    return;
   }
+
+  fetch(`/submit-availability?meeting_id=${meetingId}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ slots: selected_slots })
+  }).then(response => {
+    if (response.ok) {
+      window.location.href = "/main-menu";
+    } else {
+      alert("Error submitting availability.");
+    }
+  }).catch(err => {
+    console.error(err);
+    alert("Something went wrong.");
+  });
 });
