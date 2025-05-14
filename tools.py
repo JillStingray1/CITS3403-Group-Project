@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, date
 from sqlalchemy import Date
 import random
 import string
-from models.Meeting import Meeting
+from models.Meeting import Meeting, Timeslot
 from typing import List, Tuple
 
 
@@ -46,6 +46,7 @@ def validate_username(username: str) -> bool:
         return san_username.group() == username
     return False
 
+
 def save_login_session(user: User):
     """
     Saves the user login session state (different to ORM session).
@@ -57,6 +58,7 @@ def save_login_session(user: User):
     session["logged_in"] = True
     session["meeting_id"] = None  # Initialize meeting_id to None or a default value
     return
+
 
 def clear_login_session():
     """
@@ -71,6 +73,7 @@ def clear_login_session():
     session.pop("meeting_id", None)  # Clear meeting_id from session
 
     return
+
 
 def generate_share_code() -> str:
     """
@@ -147,18 +150,14 @@ def format_meetings(
     return (current_activities, past_activities)
 
 
-def find_best_timeslot_windows(meeting: Meeting, window_size: int, top_k: int = 10
-    ) -> List[Tuple[int, int]]:
+def find_best_timeslot_windows(meeting: Meeting, window_size: int, top_k: int = 10) -> List[Tuple[int, int]]:
     """
-    Scans the meeting’s timeslots in order, summing unavailable_users over 
+    Scans the meeting’s timeslots in order, summing unavailable_users over
     each contiguous window of size `window_size`, and returns the top_k
     windows (order index, total_unavailable), sorted by fewest unavailable.
     """
     # pull out each slot’s order and its unavailable count
-    slots = sorted(
-        meeting.timeslots, 
-        key=lambda ts: ts.order
-    )
+    slots = sorted(meeting.timeslots, key=lambda ts: ts.order)
     orders = [ts.order for ts in slots]
     unavail_counts = [len(ts.unavailable_users) for ts in slots]
 
@@ -175,3 +174,53 @@ def find_best_timeslot_windows(meeting: Meeting, window_size: int, top_k: int = 
     # pick the top_k windows with smallest total_unavailable
     best = sorted(scores.items(), key=lambda kv: kv[1])[:top_k]
     return best
+
+
+def get_num_unavailable_per_timeslot(timeslots: list[Timeslot], meeting_length: int) -> dict[int, int]:
+    """
+    Calculates the unavaliability score of each timeslot in a meeting.
+
+    The unavailability score is the sum of the total number of people unavailable
+    on the timeslots for the duration of the meeting.
+
+    The dictionary it returns has the key as the index of the timeslot, and
+    the value as the score.
+
+    Example:
+        Take a 1 hour meeting
+        At 15:00, 5 unavaliable
+        At 15:15, 4 unavailable
+        At 15:30, 3 unavailable
+        at 15:45: 0 unavailable
+        The unavalibility score of 15:00 will be 5 + 4 + 3 + 0 = 12
+
+
+    Args:
+        timeslots (list[Timeslot]): _description_
+        meeting_length (int): _description_
+
+    Returns:
+        dict[int, int]: _description_
+    """
+    sorted_timeslots = sorted(timeslots, key=lambda x: x["order"])  # sort the timeslots by order
+    amount_timeslots_needed = meeting_length // 15
+    unavailable_scores = {}
+    for i in range(len(sorted_timeslots)):
+        current_slot = sorted_timeslots[i]
+        total_unavailable = 0
+        print(f"{i % 32}, {(i+amount_timeslots_needed) % 32}")
+        if i % 32 > (i + amount_timeslots_needed) % 32:
+            print("wow")
+            break
+
+        for j in range(amount_timeslots_needed):
+            if (i + j) < len(sorted_timeslots):
+                next_slot = sorted_timeslots[i + j]
+
+                total_unavailable += len(next_slot["unavailable_users"])
+            else:
+                break
+
+            # Save the total sum into dict_order
+            unavailable_scores[current_slot["order"]] = total_unavailable
+    return unavailable_scores
