@@ -1,4 +1,5 @@
-{# templates/analysis.html #}
+<!-- This HTML is created by AI, except for some embedded javascript to expose -->
+<!-- Jinja variables -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,21 +20,16 @@
 
   <!-- Chart.js for the bar chart -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-
-  {# expose the current meeting_id to the page JS #}
-  <script type="text/javascript">
-    // available to analysis.js as a global
-    const MEETING_ID = "{{ meeting.id }}";
+  <script>
+    let top_scores = {{top_scores | tojson}}
+    let start_date = {{start_date | tojson}}
   </script>
-
-  <!-- Page logic -->
   <script
     src="{{ url_for('static', filename='javascript/analysis.js') }}"
     defer
   ></script>
 </head>
 <body id="analysis" data-meeting-id="{{ meeting.id }}">
-  <!-- ─── Navbar / Task Bar ─────────────────────────────────────────── -->
   <header class="navbar">
     <div class="nav-container">
       <!-- Logo on the left -->
@@ -44,8 +40,6 @@
           class="logo-nav"
         />
       </a>
-
-      <!-- Back button on the right -->
       <div class="nav-buttons">
         <a
           href="{{ url_for('main_menu') }}"
@@ -58,22 +52,11 @@
     </div>
   </header>
 
-  <!-- ─── Page Content ──────────────────────────────────────────────── -->
   <main class="analysis-wrapper">
     <h1 class="page-title">Stats</h1>
 
-    <div class="stats-controls">
-      <label for="week-selector">Week of</label>
-      <select id="week-selector" class="week-dropdown">
-        {% for week in upcoming_weeks %}
-          <option value="{{ week.isoformat() }}">
-            {{ week.strftime('%d %B %Y') }}
-          </option>
-        {% endfor %}
-      </select>
-    </div>
 
-    <section class="card popular-times-card">
+    <section class="card">
       <h2>Most Popular Free Times</h2>
 
       <div class="stats-headers">

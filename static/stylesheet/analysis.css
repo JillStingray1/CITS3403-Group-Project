@@ -2,32 +2,12 @@
 .analysis-wrapper {
   margin: 160px auto 60px;
   width: 90%;
-  max-width: 800px;
+  max-height: 1000px;
   text-align: center;
 }
 .page-title {
   font-size: 2.5rem;
   margin-bottom: 24px;
-}
-
-/* ── Week Selector ─────────────────────────────────────────────────── */
-.stats-controls {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 32px;
-}
-.stats-controls label {
-  font-weight: 500;
-  white-space: nowrap;
-}
-.week-dropdown {
-  padding: 8px 12px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background: #fff;
-  cursor: pointer;
 }
 
 /* ── Card ───────────────────────────────────────────────────────────── */
@@ -37,7 +17,6 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   padding: 24px;
   margin: 0 auto 60px;
-  max-width: 700px;
 }
 .card h2 {
   font-size: 1.5rem;
@@ -63,6 +42,5 @@
 /* ── Bar Chart Container ───────────────────────────────────────────── */
 .chart-wrapper {
   position: relative;
-  height: 200px; /* chart height */
   margin-top: 16px;
 }
