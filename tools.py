@@ -149,33 +149,6 @@ def format_meetings(
     past_activities.sort(key=lambda item: item[0], reverse=True)
     return (current_activities, past_activities)
 
-
-def find_best_timeslot_windows(meeting: Meeting, window_size: int, top_k: int = 10) -> List[Tuple[int, int]]:
-    """
-    Scans the meeting’s timeslots in order, summing unavailable_users over
-    each contiguous window of size `window_size`, and returns the top_k
-    windows (order index, total_unavailable), sorted by fewest unavailable.
-    """
-    # pull out each slot’s order and its unavailable count
-    slots = sorted(meeting.timeslots, key=lambda ts: ts.order)
-    orders = [ts.order for ts in slots]
-    unavail_counts = [len(ts.unavailable_users) for ts in slots]
-
-    scores = {}
-    for i, base_order in enumerate(orders):
-        running = 0
-        for j in range(window_size):
-            if i + j < len(unavail_counts):
-                running += unavail_counts[i + j]
-            else:
-                break
-        scores[base_order] = running
-
-    # pick the top_k windows with smallest total_unavailable
-    best = sorted(scores.items(), key=lambda kv: kv[1])[:top_k]
-    return best
-
-
 def get_num_unavailable_per_timeslot(timeslots: list[Timeslot], meeting_length: int) -> dict[int, int]:
     """
     Calculates the unavaliability score of each timeslot in a meeting.
@@ -208,9 +181,7 @@ def get_num_unavailable_per_timeslot(timeslots: list[Timeslot], meeting_length: 
     for i in range(len(sorted_timeslots)):
         current_slot = sorted_timeslots[i]
         total_unavailable = 0
-        print(f"{i % 32}, {(i+amount_timeslots_needed) % 32}")
         if i % 32 > (i + amount_timeslots_needed) % 32:
-            print("wow")
             break
 
         for j in range(amount_timeslots_needed):
