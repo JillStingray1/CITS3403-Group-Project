@@ -35,7 +35,7 @@ window.onload = () => {
         data: {
             labels: date_lables,
             datasets: [{
-                label: '# of Votes',
+                label: 'Unavaliability score',
                 data: unavaliability_scores,
                 borderWidth: 1
             }]
