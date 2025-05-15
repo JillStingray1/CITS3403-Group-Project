@@ -2,10 +2,8 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-
-
 class BaseConfig:
-    SECRET_KEY = os.getenv("SECRET_KEY")
+    SECRET_KEY = os.getenv("SESSION_KEY")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
@@ -15,4 +13,4 @@ class DeploymentConfig(BaseConfig):
 
 class TestConfig(BaseConfig):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
