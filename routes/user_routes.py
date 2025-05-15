@@ -56,7 +56,7 @@ def init_user_routes(app, db, bcrypt):
 
             save_login_session(new_user)
             # setting the session variables to the current user
-            return redirect("/main-menu")  # redirect to the main menu page after signup
+            return redirect(url_for("main_menu"))  # redirect to the main menu page after signup
         return render_template("sign-up.html", form=form, is_username_valid=True)
 
     @app.route("/user/login", methods=["GET", "POST"])
@@ -81,7 +81,7 @@ def init_user_routes(app, db, bcrypt):
             password = form.password.data
             if bcrypt.check_password_hash(user.password_hash, password):
                 save_login_session(user)
-                return redirect("/main-menu")
+                return redirect(url_for("main_menu"))
             return render_template("login.html", form=form, error="Incorrect Password.")
 
             # setting the session variables to the current user

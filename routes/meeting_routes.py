@@ -71,9 +71,7 @@ def init_meeting_routes(app, db):
 
             session["meeting_id"] = new_meeting.id
 
-            return redirect(
-                url_for("availability_selection")
-            )  # redirect to the date selection page after creating the meeting
+            return redirect(url_for("main_menu"))  # redirect to the date selection page after creating the meeting
         else:
             # If the form is not valid, render the form again with errors
             return render_template("activity-create.html", form=form)
