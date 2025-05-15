@@ -89,7 +89,10 @@ Meeting Manager helps organisers create meetings over a date range, invite parti
 │   ├── activity-create.html
 │   ├── analysis.html     
 │   └── …                 
-├── tools.py              # Business-logic helpers (best-slot computation)
+├── tools
+│   ├── tools.py          # Business-logic helpers (eg. best-slot computation)
+│   ├── config.py         # Stores various app configurations
+│   └── extensions.py     # Initializes the database before creation
 ├── middleware/           # @secure decorator for login-required
 ├── migrations/           # Alembic DB migrations
 ├── test/                 # pytest test modules
