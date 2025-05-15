@@ -139,8 +139,8 @@ Meeting Manager helps organisers create meetings over a date range, invite parti
 2. **Edit `.env`** and set:
 
    ```ini
-   SECRET_KEY=your_secret_key_here
-   SQLALCHEMY_DATABASE_URI=postgresql://user:password@localhost:5432/your_db
+   SECRET_KEY="your_secret_key_here"
+   SQLALCHEMY_DATABASE_URI="sqlite:///app.db"
    ```
 
 3. **Initialize the database**
@@ -174,8 +174,9 @@ Visit `http://localhost:5000/` to see the landing page.
 
 ## Testing
 
+To run unit tests, run the following command.
 ```bash
-pytest
+python -m unitest
 ```
 
 Ensure `.env` is configured (you can use an in‑memory SQLite URI for tests).
