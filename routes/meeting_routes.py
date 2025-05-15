@@ -1,6 +1,6 @@
 from flask import session, request, jsonify, redirect, url_for, render_template, flash
 from models import User, Meeting, Timeslot
-from tools import (
+from tools.tools import (
     generate_share_code,
     format_meetings,
     get_num_unavailable_per_timeslot,

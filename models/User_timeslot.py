@@ -1,5 +1,5 @@
 from sqlalchemy import  ForeignKey, Column, Table
-from extensions import db, Base
+from tools.extensions import db, Base
 
 User_timeslot_association = Table(
     "User_timeslot_association",

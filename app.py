@@ -2,7 +2,7 @@ from flask import Flask, render_template
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from flask_wtf import CSRFProtect
-from extensions import db
+from tools.extensions import db
 from dotenv import load_dotenv
 import os
 

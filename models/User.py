@@ -1,8 +1,7 @@
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from extensions import db
+from tools.extensions import db
 from models.Association import association_table
-
 
 
 class User(db.Model):
