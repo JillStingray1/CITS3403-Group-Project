@@ -342,8 +342,14 @@ def init_meeting_routes(app, db):
         # (optionally pre‐compute any stats server‐side here, or just let your JS fetch /meeting/stats)
         return render_template("analysis.html", meeting=meeting, top_scores=top_scores, start_date=meeting.start_date)
 
-    @app.route("/availability-selection")
+    @app.route("/availability-selection/<int:meeting_id>")
     @secure
-    def availability_selection():
+    def availability_selection(meeting_id):
+        user = User.query.get(session["user_id"])
+        meeting = Meeting.query.get(meeting_id)
+        if user not in meeting.users:
+            return redirect(url_for("main_menu"))
+
+        session["meeting_id"] = meeting_id
 
         return render_template("availability-selection.html")
