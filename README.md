@@ -180,6 +180,9 @@ python -m unitest
 
 Ensure `.env` is configured (you can use an in‑memory SQLite URI for tests).
 
+## References
+Main menu video obtained from https://www.pexels.com/video/man-people-woman-desk-7687999/
+
 
 ---
 
