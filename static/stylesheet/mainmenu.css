@@ -63,6 +63,30 @@ body.main-background {
   margin-bottom: 40px;
 }
 
+/* Header wrapper for card-section */
+.card-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+/* View Stats button */
+.view-stats-btn {
+  font-size: 14px;
+  padding: 8px 16px;
+  background-color: #F89F7F;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.view-stats-btn:hover {
+  background-color: #e36745;
+}
+
 /* Section titles */
 .card-section {
   margin-bottom: 40px;

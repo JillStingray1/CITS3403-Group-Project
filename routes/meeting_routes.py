@@ -1,4 +1,4 @@
-from flask import Flask, session, request, jsonify, redirect, url_for, render_template
+from flask import Flask, session, request, jsonify, redirect, url_for, render_template, flash
 from models.Models import User, Meeting, Timeslot
 from tools import (
     validate_username,
@@ -7,12 +7,14 @@ from tools import (
     clear_login_session,
     generate_share_code,
     format_meetings,
+    get_num_unavailable_per_timeslot,
 )
 from middleware.middleware import secure
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from forms import meetingCreationForm, ShareCodeForm
 from models.Meeting import Meeting
 from models.Association import association_table
+from models.User import User
 
 # TODO: add a migration to add a new column to the meeting table to store the current most effective timeslot. this should be calculated each time a timeslot is added or removed. change the add_to_timeslot function to update this column.
 
@@ -67,7 +69,9 @@ def init_meeting_routes(app, db):
 
             session["meeting_id"] = new_meeting.id
 
-            return redirect(url_for('availability_selection')) # redirect to the date selection page after creating the meeting
+            return redirect(
+                url_for("availability_selection")
+            )  # redirect to the date selection page after creating the meeting
         else:
             # If the form is not valid, render the form again with errors
             return render_template("activity-create.html", form=form)
@@ -126,7 +130,7 @@ def init_meeting_routes(app, db):
                     "best_timeslot": best_timeslot,
                     "timeslots": timeslot_list,
                     "user_id": session["user_id"],
-                    "username":session["username"],
+                    "username": session["username"],
                 }
             ),
             200,
@@ -186,7 +190,7 @@ def init_meeting_routes(app, db):
             print(timeslot)
             if not timeslot:
                 return jsonify({"error": f"Timeslot with ID {timeslot_id} not found"}), 404
-            
+
             if user in timeslot.unavailable_users:
                 timeslot.unavailable_users.remove(user)
 
@@ -305,8 +309,41 @@ def init_meeting_routes(app, db):
             200,
         )
 
+    @app.route("/analysis/<int:meeting_id>")
+    @secure
+    def analysis_page(meeting_id: int):
+        """
+        Prints the analysis page based on the meeting id, this page is
+        linked to from the main menu
+
+        Args:
+            meeting_id (int): The meeting Id for the graph we want to see
+
+        Returns:
+            Analysis page template if meeting exists and contains user, redirect
+            back to main menu if not
+        """
+        meeting = Meeting.query.get(meeting_id)
+        if meeting is None:
+            redirect(url_for("main_menu"))
+        user = User.query.get(session["user_id"])
+        if user not in meeting.users:
+            redirect(url_for("main_menu"))
+        timeslots = get_timeslots(meeting)
+        unavalibility_scores_list = list(get_num_unavailable_per_timeslot(timeslots, meeting.meeting_length).items())
+        unavalibility_scores_list.sort(key=lambda x: x[1])
+        top_scores = unavalibility_scores_list[:10]
+        print(top_scores)
+
+        if not meeting:
+            flash("Please create or select a meeting first.", "warning")
+            return redirect(url_for("main_menu"))
+
+        # (optionally pre‐compute any stats server‐side here, or just let your JS fetch /meeting/stats)
+        return render_template("analysis.html", meeting=meeting, top_scores=top_scores, start_date=meeting.start_date)
+
     @app.route("/availability-selection")
     @secure
     def availability_selection():
-        
+
         return render_template("availability-selection.html")

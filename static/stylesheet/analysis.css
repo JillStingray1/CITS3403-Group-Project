@@ -1,0 +1,46 @@
+/* ── Page Wrapper & Title ──────────────────────────────────────────── */
+.analysis-wrapper {
+  margin: 160px auto 60px;
+  width: 90%;
+  max-height: 1000px;
+  text-align: center;
+}
+.page-title {
+  font-size: 2.5rem;
+  margin-bottom: 24px;
+}
+
+/* ── Card ───────────────────────────────────────────────────────────── */
+.card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 24px;
+  margin: 0 auto 60px;
+}
+.card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+  text-align: left;
+}
+
+/* ── Table‐style Headers Above Chart ──────────────────────────────── */
+.stats-headers {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px;
+  margin-bottom: 8px;
+  color: #555;
+  font-weight: 500;
+  border-bottom: 1px solid #ddd;
+}
+.stats-headers .col-slot { text-align: left; }
+.stats-headers .col-users { text-align: right; }
+
+/* ── Bar Chart Container ───────────────────────────────────────────── */
+.chart-wrapper {
+  position: relative;
+  margin-top: 16px;
+}

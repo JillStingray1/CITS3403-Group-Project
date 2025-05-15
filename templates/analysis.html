@@ -1,0 +1,72 @@
+<!-- This HTML is created by AI, except for some embedded javascript to expose -->
+<!-- Jinja variables -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stats</title>
+
+  <!-- Shared task-bar / navbar styles -->
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='stylesheet/common.css') }}"
+  />
+  <!-- Page-specific styles -->
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='stylesheet/analysis.css') }}"
+  />
+
+  <!-- Chart.js for the bar chart -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <script>
+    let top_scores = {{top_scores | tojson}}
+    let start_date = {{start_date | tojson}}
+  </script>
+  <script
+    src="{{ url_for('static', filename='javascript/analysis.js') }}"
+    defer
+  ></script>
+</head>
+<body id="analysis" data-meeting-id="{{ meeting.id }}">
+  <header class="navbar">
+    <div class="nav-container">
+      <!-- Logo on the left -->
+      <a href="{{ url_for('index') }}" class="logo-link">
+        <img
+          src="{{ url_for('static', filename='media/app-logo.png') }}"
+          alt="App Logo"
+          class="logo-nav"
+        />
+      </a>
+      <div class="nav-buttons">
+        <a
+          href="{{ url_for('main_menu') }}"
+          class="btn btn-primary"
+          role="button"
+        >
+          ← Back to Main Menu
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="analysis-wrapper">
+    <h1 class="page-title">Stats</h1>
+
+
+    <section class="card">
+      <h2>Most Popular Free Times</h2>
+
+      <div class="stats-headers">
+        <div class="col-slot">The unavaliability score is the total unavaliability for users over the course of the entire meeting</div>
+      </div>
+
+      <div class="chart-wrapper">
+        <canvas id="popular-times-chart"></canvas>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
