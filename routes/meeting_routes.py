@@ -77,33 +77,6 @@ def init_meeting_routes(app, db):
             # If the form is not valid, render the form again with errors
             return render_template("activity-create.html", form=form)
 
-    @app.route("/meeting/all", methods=["GET"])
-    @secure
-    def get_all_meetings():
-        """
-        Get all current users meetings. Returns JSON with meeting details.
-        """
-        user = User.query.get(session["user_id"])
-        user_meetings = user.meetings
-        meeting_list = []
-        for meeting in user_meetings:
-
-            best_timeslot = meeting.best_timeslot if meeting.best_timeslot else 0
-            meeting_list.append(
-                {
-                    "id": meeting.id,
-                    "start_date": meeting.start_date,
-                    "end_date": meeting.end_date,
-                    "meeting_length": meeting.meeting_length,
-                    "meeting_name": meeting.meeting_name,
-                    "meeting_description": meeting.meeting_description,
-                    "share_code": meeting.share_code,
-                    "best_timeslot": best_timeslot,
-                }
-            )
-
-        return jsonify(meeting_list), 200
-
     @app.route("/meeting", methods=["GET"])
     @secure
     def get_current_meeting():
@@ -132,36 +105,6 @@ def init_meeting_routes(app, db):
                     "timeslots": timeslot_list,
                     "user_id": session["user_id"],
                     "username": session["username"],
-                }
-            ),
-            200,
-        )
-
-    @app.route("/meeting/<int:meeting_id>", methods=["GET"])
-    @secure
-    def get_meeting(meeting_id):
-        """
-        Get a meeting by ID. Returns JSON with meeting details.
-        """
-        meeting = Meeting.query.get(meeting_id)
-        if not meeting:
-            return jsonify({"error": "Meeting not found"}), 404
-
-        timeslot_list = get_timeslots(meeting)
-        best_timeslot = meeting.best_timeslot if meeting.best_timeslot else 0
-
-        return (
-            jsonify(
-                {
-                    "id": meeting.id,
-                    "start_date": meeting.start_date,
-                    "end_date": meeting.end_date,
-                    "meeting_length": meeting.meeting_length,
-                    "meeting_name": meeting.meeting_name,
-                    "meeting_description": meeting.meeting_description,
-                    "share_code": meeting.share_code,
-                    "best_timeslot": best_timeslot,
-                    "timeslots": timeslot_list,
                 }
             ),
             200,
@@ -210,30 +153,6 @@ def init_meeting_routes(app, db):
 
         return jsonify({"message": "User added to timeslot(s)"}), 200
 
-    @app.route("/meeting/code", methods=["POST"])
-    @secure
-    def join_meeting():
-        """
-        Join a meeting using a share code. Expects JSON as { share_code: 'share_code' }
-        """
-        data = request.get_json()
-        share_code = data.get("share_code")
-
-        meeting = Meeting.query.filter_by(share_code=share_code).first()
-
-        if not meeting:
-            return jsonify({"error": "Meeting not found"}), 404
-
-        user = User.query.get(session["user_id"])
-
-        if user in meeting.users:
-            return jsonify({"error": "User already in meeting"}), 400
-
-        meeting.users.append(user)
-        db.session.commit()
-
-        return jsonify({"message": "User added to meeting"}), 200
-
     @app.route("/main-menu", methods=["GET", "POST"])
     @secure
     def main_menu():
@@ -269,7 +188,7 @@ def init_meeting_routes(app, db):
     @secure
     def get_meeting_by_code(share_code):
         """
-        Get a meeting by ID. Returns JSON with meeting details.
+        Get a meeting by Share code. Returns JSON with meeting details.
         This is used for ajax in the main menu
         """
         meeting = Meeting.query.filter_by(share_code=share_code).first()
