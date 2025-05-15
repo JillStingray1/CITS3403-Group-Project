@@ -56,18 +56,28 @@
         <table>
           <thead>
             <tr>
-              <th>Activity</th>
+              <th>
+                <p>Activity </p>
+                <p>(Select unavailability)</p>
+              </th>
               <th>End Date</th>
-              <th>Best Time</th>
+              <th>Suggested <br>Best Time</th>
+              <th>Meeting Duration</th>
               <th>Share Code</th>
             </tr>
           </thead>
           <tbody>
             {% for activity in created_activities %}
               <tr>
-                <td>{{ activity[1].meeting_name }}</td>
+                <td><a href="{{ url_for('availability_selection', meeting_id=activity[1].id) }}">{{ activity[1].meeting_name }}</a></td>
                 <td>{{ activity[1].end_date.strftime('%d %B %Y') }}</td>
                 <td><a href="{{ url_for('analysis_page', meeting_id=activity[1].id) }}">{{ activity[0].strftime("%d %B %H:%M") }}</a></td>
+                <td>
+                  {% if  activity[1].meeting_length // 60 > 0 %}
+                    {{ activity[1].meeting_length // 60}} hour 
+                  {% endif %}
+                  {{ activity[1].meeting_length % 60}} min
+                </td>
                 <td>{{ activity[1].share_code }}</td>
               </tr>
             {% else %}
@@ -88,7 +98,8 @@
             <tr>
               <th>Activity</th>
               <th>End Date</th>
-              <th>Best Time</th>
+              <th>Suggested <br> Best Time</th>
+              <th>Meeting Duration</th>
               <th>Share Code</th>
             </tr>
           </thead>
@@ -98,6 +109,12 @@
                 <td>{{ activity[1].meeting_name }}</td>
                 <td>{{ activity[1].end_date.strftime('%d %B %Y') }}</td>
                 <td>{{ activity[0].strftime("%d %B %H:%M") }}</td>
+                <td>
+                  {% if  activity[1].meeting_length // 60 > 0 %}
+                    {{ activity[1].meeting_length // 60}} hour 
+                  {% endif %}
+                  {{ activity[1].meeting_length % 60}} min
+                </td>
                 <td>{{ activity[1].share_code }}</td>
               </tr>
             {% else %}
@@ -107,12 +124,6 @@
             {% endfor %}
           </tbody>
         </table>
-      </div>
-    </section>
-
-    <section class="calendar-section">
-      <div class="calendar-placeholder">
-        <p>Calendar Placeholder</p>
       </div>
     </section>
   </main>
