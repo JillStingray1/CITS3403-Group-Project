@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, DateField, IntegerField, ValidationError
 from wtforms.validators import DataRequired, Length, EqualTo, Regexp, NumberRange
+from datetime import date
 
 
 class meetingCreationForm(FlaskForm):
@@ -8,6 +9,10 @@ class meetingCreationForm(FlaskForm):
     def validate_meeting_length(form, field):
         if field.data % 15 != 0:
             raise ValidationError("Meeting length must be divisible by 15 minutes")
+        
+    def validate_start_date(form, field):
+        if field.data < date.today():
+            raise ValidationError("Start date cannot be in the past")
         
     def validate_end_date(form, field):
         if field.data < form.start_date.data:
@@ -38,7 +43,11 @@ class meetingCreationForm(FlaskForm):
         format="%Y-%m-%d",
         validators=[
             DataRequired(message="Start date is required"),
+            validate_start_date
         ],
+        render_kw={
+            "min": date.today().isoformat()
+        }
     )
     end_date = DateField(
         "End Date",
@@ -47,6 +56,9 @@ class meetingCreationForm(FlaskForm):
             DataRequired(message="End date is required"),
             validate_end_date,
         ],
+        render_kw={
+            "min": date.today().isoformat()
+        }
     )
     meeting_length = IntegerField(
         "Meeting Length",
