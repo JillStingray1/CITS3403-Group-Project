@@ -51,7 +51,6 @@
     <section class="card-section">
       <div class="card-section-header">
         <h2>Current Activities</h2>
-        <a href="{{ url_for('analysis_page') }}" class="button button-orange view-stats-btn">View Stats</a>
       </div>
       <div class="card">
         <table>
@@ -68,7 +67,7 @@
               <tr>
                 <td>{{ activity[1].meeting_name }}</td>
                 <td>{{ activity[1].end_date.strftime('%d %B %Y') }}</td>
-                <td>{{ activity[0].strftime("%d %B %H:%M") }}</td>
+                <td><a href="{{ url_for('analysis_page', meeting_id=activity[1].id) }}">{{ activity[0].strftime("%d %B %H:%M") }}</a></td>
                 <td>{{ activity[1].share_code }}</td>
               </tr>
             {% else %}

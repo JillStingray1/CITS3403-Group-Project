@@ -309,10 +309,26 @@ def init_meeting_routes(app, db):
             200,
         )
 
-    @app.route("/analysis")
+    @app.route("/analysis/<int:meeting_id>")
     @secure
-    def analysis_page():
-        meeting = Meeting.query.get(session["meeting_id"])
+    def analysis_page(meeting_id: int):
+        """
+        Prints the analysis page based on the meeting id, this page is
+        linked to from the main menu
+
+        Args:
+            meeting_id (int): The meeting Id for the graph we want to see
+
+        Returns:
+            Analysis page template if meeting exists and contains user, redirect
+            back to main menu if not
+        """
+        meeting = Meeting.query.get(meeting_id)
+        if meeting is None:
+            redirect(url_for("main_menu"))
+        user = User.query.get(session["user_id"])
+        if user not in meeting.users:
+            redirect(url_for("main_menu"))
         timeslots = get_timeslots(meeting)
         unavalibility_scores_list = list(get_num_unavailable_per_timeslot(timeslots, meeting.meeting_length).items())
         unavalibility_scores_list.sort(key=lambda x: x[1])
