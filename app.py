@@ -19,7 +19,7 @@ db.init_app(app)
 migrate = Migrate(app, db)
 
 # Import after app is defined
-import models.Models
+import models
 
 # after the models are imported, create the database tables
 with app.app_context():

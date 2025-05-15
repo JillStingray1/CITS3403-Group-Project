@@ -1,5 +1,5 @@
 from re import search
-from models.Models import User
+from models import User
 from flask import session
 from datetime import datetime, timedelta, date
 from sqlalchemy import Date

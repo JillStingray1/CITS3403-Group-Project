@@ -1,5 +1,5 @@
 from flask import Flask, session, request, jsonify, redirect, url_for, render_template, flash
-from models.Models import User, Meeting, Timeslot
+from models import User, Meeting, Timeslot
 from tools import (
     validate_username,
     validate_password,

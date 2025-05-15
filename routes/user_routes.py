@@ -6,7 +6,7 @@ from flask import (
     url_for,
     render_template,
 )
-from models.Models import User
+from models import User
 from tools import save_login_session, clear_login_session
 from middleware.middleware import secure
 from forms import LoginForm, SignUpForm
