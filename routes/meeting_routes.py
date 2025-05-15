@@ -13,7 +13,15 @@ from models import association_table, Meeting, User
 
 
 def get_timeslots(Meeting):
+    """
+    Gets all timeslots for a single meeting
 
+    Args:
+        Meeting (Meeting): A meeting from the database
+
+    Returns:
+        list[Timeslots]: A list of timeslots
+    """
     timeslots = Meeting.timeslots
     timeslot_list = []
 
@@ -338,8 +346,18 @@ def init_meeting_routes(app, db):
     @app.route("/availability-selection/<int:meeting_id>")
     @secure
     def availability_selection(meeting_id):
+        """
+        Renders the avaliability selection page for a meeting from its
+        id
+
+        Args:
+            meeting_id (int): The meeting's id in the database
+        """
         user = User.query.get(session["user_id"])
         meeting = Meeting.query.get(meeting_id)
+        # prevents users from access meetings they are not in
+        if meeting is None:
+            return redirect(url_for("main_menu"))
         if user not in meeting.users:
             return redirect(url_for("main_menu"))
 
