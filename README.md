@@ -102,9 +102,12 @@ Meeting Manager helps organisers create meetings over a date range, invite parti
 
 1. **Clone the repo**
 
-   ```bash
-   https://github.com/JillStingray1/CITS3403-Group-Project.git
+  ```bash
+   cd ~/Projects #project folder where you want the project to live
+   git clone https://github.com/JillStingray1/CITS3403-Group-Project.git 
    cd CITS3403-Group-Project
+   git status #verify branch
+   git pull #verify up to date
    ```
 
 2. **Create and activate a virtual environment**
