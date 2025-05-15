@@ -3,19 +3,19 @@ from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from flask_wtf import CSRFProtect
 from tools.extensions import db
-from dotenv import load_dotenv
-import os
+from tools.config import DeploymentConfig
 
 
-load_dotenv()
-app = Flask(__name__)
+def create_app(config):
+    app = Flask(__name__)
+    app.config.from_object(config)
+    db.init_app(app)
+    CSRFProtect(app)
+    return app
+
+
+app = create_app(DeploymentConfig)
 bcrypt = Bcrypt(app)
-
-app.config['SECRET_KEY'] = os.getenv('SESSION_KEY')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_URI')
-CSRFProtect(app)
-
-db.init_app(app)
 migrate = Migrate(app, db)
 
 # Import after app is defined
