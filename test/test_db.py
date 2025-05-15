@@ -31,9 +31,9 @@ class DatabaseTest(unittest.TestCase):
 
     def test_password_hashing(self):
         alex = User.query.filter(User.username == "Alex").first()
-        self.assertTrue(self.encryption_alg.check_password_hash(alex.password_hash, "epic"))
+        self.assertTrue(self.encryption_alg.check_password_hash(alex.password_hash, "epico"))
 
     def add_test_data_to_db(self):
-        new_user = User(username="Alex", password_hash=self.encryption_alg.generate_password_hash("epic"))  # type: ignore
+        new_user = User(username="Alex", password_hash=self.encryption_alg.generate_password_hash("epico"))  # type: ignore
         db.session.add(new_user)
         db.session.commit()
