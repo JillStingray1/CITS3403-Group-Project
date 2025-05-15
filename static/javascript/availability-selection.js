@@ -10,7 +10,7 @@ const dateEl = document.getElementById("current-date");
 /**
  * Convert a 15-minute slot index into a time string, cycling every
  * 32 slots (09:00–17:00).
- * 
+ * this function was provided by AI
  * @param {number} order
  *   Non-negative integer slot index (0 → day 0 @ 09:00, 32 → day 1 @ 09:00).
  * @returns {{ dayOffset: number, time: string }}

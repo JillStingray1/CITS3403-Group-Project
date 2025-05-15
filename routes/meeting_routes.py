@@ -228,6 +228,8 @@ def init_meeting_routes(app, db):
         db.session.commit()
 
         return jsonify({"message": "User added to timeslot(s)"}), 200
+    
+
 
     @app.route("/meeting/code", methods=["POST"])
     @secure
@@ -252,6 +254,8 @@ def init_meeting_routes(app, db):
         db.session.commit()
 
         return jsonify({"message": "User added to meeting"}), 200
+    
+
 
     @app.route("/main-menu", methods=["GET", "POST"])
     @secure
@@ -347,3 +351,20 @@ def init_meeting_routes(app, db):
     def availability_selection():
 
         return render_template("availability-selection.html")
+    
+    @app.route("/meeting/setsession", methods="POST")
+    @secure
+    def set_meeting_session():
+        """
+        Set the meeting ID in the session. This is used to set the meeting ID
+        when the user selects a meeting from the main menu, and can be reused for other routes
+        """
+        data = request.get_json()
+        meeting_id = data.get("meeting_id")
+        user = User.query.get(session["user_id"])
+        meeting = Meeting.query.get(meeting_id)
+        if user not in meeting.users:
+            return jsonify({"error": "User not part of the meeting"}), 403
+        
+        session["meeting_id"] = meeting_id
+        return jsonify({"message": "Meeting ID set in session"}), 200
