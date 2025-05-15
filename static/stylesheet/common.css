@@ -17,7 +17,8 @@
 }
 
 .logo-nav {
-  width: 145px;
+  scale:80%;
+  max-width: 145px;
 }
 
 .nav-buttons .btn-primary {
