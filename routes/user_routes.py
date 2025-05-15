@@ -1,6 +1,5 @@
 from flask import (
     session,
-    request,
     jsonify,
     redirect,
     url_for,

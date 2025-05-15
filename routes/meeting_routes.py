@@ -1,20 +1,13 @@
-from flask import Flask, session, request, jsonify, redirect, url_for, render_template, flash
+from flask import session, request, jsonify, redirect, url_for, render_template, flash
 from models import User, Meeting, Timeslot
 from tools import (
-    validate_username,
-    validate_password,
-    save_login_session,
-    clear_login_session,
     generate_share_code,
     format_meetings,
     get_num_unavailable_per_timeslot,
 )
 from middleware.middleware import secure
-from datetime import date, datetime, timedelta
 from forms import meetingCreationForm, ShareCodeForm
-from models.Meeting import Meeting
-from models.Association import association_table
-from models.User import User
+from models import association_table, Meeting, User
 
 # TODO: add a migration to add a new column to the meeting table to store the current most effective timeslot. this should be calculated each time a timeslot is added or removed. change the add_to_timeslot function to update this column.
 
