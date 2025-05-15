@@ -37,6 +37,7 @@ def get_timeslots(Meeting):
 
 
 def init_meeting_routes(app, db):
+    # Create meetings page
     @app.route("/meeting/create", methods=["GET", "POST"])
     @secure
     def create_meeting():
@@ -77,82 +78,7 @@ def init_meeting_routes(app, db):
             # If the form is not valid, render the form again with errors
             return render_template("activity-create.html", form=form)
 
-    @app.route("/meeting", methods=["GET"])
-    @secure
-    def get_current_meeting():
-        """
-        Get the current meeting saved in session. Returns JSON with meeting details.
-        """
-        meeting = Meeting.query.get(session["meeting_id"])
-        if not meeting:
-            return jsonify({"error": "Meeting not found"}), 404
-
-        timeslot_list = get_timeslots(meeting)
-
-        best_timeslot = meeting.best_timeslot if meeting.best_timeslot else 0
-
-        return (
-            jsonify(
-                {
-                    "id": meeting.id,
-                    "start_date": meeting.start_date,
-                    "end_date": meeting.end_date,
-                    "meeting_length": meeting.meeting_length,
-                    "meeting_name": meeting.meeting_name,
-                    "meeting_description": meeting.meeting_description,
-                    "share_code": meeting.share_code,
-                    "best_timeslot": best_timeslot,
-                    "timeslots": timeslot_list,
-                    "user_id": session["user_id"],
-                    "username": session["username"],
-                }
-            ),
-            200,
-        )
-
-    @app.route("/meeting/timeslot", methods=["POST"])
-    @secure
-    def add_to_timeslot():
-        """
-        Add a user to a timeslot. Expects JSON as { timeslots: [{timeslot_id: int}] }
-        """
-        data = request.get_json()
-
-        user = User.query.get(session["user_id"])
-        if not user:
-            return jsonify({"error": "User not found"}), 404
-
-        meeting = Meeting.query.get(session["meeting_id"])
-        if user not in meeting.users:
-            return jsonify({"error": "User not part of the meeting"}), 403
-
-        timeslot_entries = data.get("timeslots", [])
-
-        for entry in timeslot_entries:
-            timeslot_id = entry.get("timeslot_id")
-            timeslot = Timeslot.query.get(timeslot_id)
-            if not timeslot:
-                return jsonify({"error": f"Timeslot with ID {timeslot_id} not found"}), 404
-
-            if user in timeslot.unavailable_users:
-                timeslot.unavailable_users.remove(user)
-
-            else:
-                timeslot.unavailable_users.append(user)
-
-        db.session.commit()
-
-        timeslots = get_timeslots(meeting)
-
-        dict_order = get_num_unavailable_per_timeslot(timeslots, meeting.meeting_length)
-        best_order = min(
-            dict_order, key=lambda k: dict_order[k]
-        )  # get the order with the least amount of unavailable users in its window
-        meeting.best_timeslot = best_order
-        db.session.commit()
-
-        return jsonify({"message": "User added to timeslot(s)"}), 200
-
+    # routes related to main menu
     @app.route("/main-menu", methods=["GET", "POST"])
     @secure
     def main_menu():
@@ -209,6 +135,7 @@ def init_meeting_routes(app, db):
             200,
         )
 
+    # Analysis page route
     @app.route("/analysis/<int:meeting_id>")
     @secure
     def analysis_page(meeting_id: int):
@@ -242,6 +169,7 @@ def init_meeting_routes(app, db):
         # (optionally pre‐compute any stats server‐side here, or just let your JS fetch /meeting/stats)
         return render_template("analysis.html", meeting=meeting, top_scores=top_scores, start_date=meeting.start_date)
 
+    # Availability selection routes
     @app.route("/availability-selection/<int:meeting_id>")
     @secure
     def availability_selection(meeting_id):
@@ -263,3 +191,79 @@ def init_meeting_routes(app, db):
         session["meeting_id"] = meeting_id
 
         return render_template("availability-selection.html")
+
+    @app.route("/meeting/timeslot", methods=["POST"])
+    @secure
+    def add_to_timeslot():
+        """
+        Add a user to a timeslot. Expects JSON as { timeslots: [{timeslot_id: int}] }
+        """
+        data = request.get_json()
+
+        user = User.query.get(session["user_id"])
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        meeting = Meeting.query.get(session["meeting_id"])
+        if user not in meeting.users:
+            return jsonify({"error": "User not part of the meeting"}), 403
+
+        timeslot_entries = data.get("timeslots", [])
+
+        for entry in timeslot_entries:
+            timeslot_id = entry.get("timeslot_id")
+            timeslot = Timeslot.query.get(timeslot_id)
+            if not timeslot:
+                return jsonify({"error": f"Timeslot with ID {timeslot_id} not found"}), 404
+
+            if user in timeslot.unavailable_users:
+                timeslot.unavailable_users.remove(user)
+
+            else:
+                timeslot.unavailable_users.append(user)
+
+        db.session.commit()
+
+        timeslots = get_timeslots(meeting)
+
+        slot_index_by_unavail = get_num_unavailable_per_timeslot(timeslots, meeting.meeting_length)
+        best_order = min(
+            slot_index_by_unavail, key=lambda k: slot_index_by_unavail[k]
+        )  # get the order with the least amount of unavailable users in its window
+        meeting.best_timeslot = best_order
+        db.session.commit()
+
+        return jsonify({"message": "User added to timeslot(s)"}), 200
+
+    @app.route("/meeting", methods=["GET"])
+    @secure
+    def get_current_meeting():
+        """
+        Get the current meeting saved in session. Returns JSON with meeting details.
+        """
+        meeting = Meeting.query.get(session["meeting_id"])
+        if not meeting:
+            return jsonify({"error": "Meeting not found"}), 404
+
+        timeslot_list = get_timeslots(meeting)
+
+        best_timeslot = meeting.best_timeslot if meeting.best_timeslot else 0
+
+        return (
+            jsonify(
+                {
+                    "id": meeting.id,
+                    "start_date": meeting.start_date,
+                    "end_date": meeting.end_date,
+                    "meeting_length": meeting.meeting_length,
+                    "meeting_name": meeting.meeting_name,
+                    "meeting_description": meeting.meeting_description,
+                    "share_code": meeting.share_code,
+                    "best_timeslot": best_timeslot,
+                    "timeslots": timeslot_list,
+                    "user_id": session["user_id"],
+                    "username": session["username"],
+                }
+            ),
+            200,
+        )
