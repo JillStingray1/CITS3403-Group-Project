@@ -26,23 +26,41 @@
   <!-- Main hero area -->
   <main>
     <section class="landing-container">
+      
       <div class="hero-video">
         <video autoplay loop muted playsinline>
-          <source src="{{ url_for('static', filename='media/launching-soon.mp4') }}"
+          <source src="{{ url_for('static', filename='media/meeting.mp4') }}"
                   type="video/mp4" />
           Sorry, your browser doesn’t support HTML5 video.
         </video>
+
+        <div class="hero-text">
+          <h1>Slice of Time</h1>
+        </div>
       </div>
       <div class="hero-text">
-        <h1>Time Tabling<br>Meeting App</h1>
-      </div>
+          <h1>Slice of Time</h1>
+        </div>
+
+
       <div class="discription-body">
-        <p>The Time tabling meeting app is a simple to use, effective meeting planning app for any team.</p>
         <h2>How to use:</h2>
         <ol>
-          <li>Create an account by pressing the Get Started button in the nav bar.</li>
-          <li>Create a meeting, and share it with your team.</li>
-          <li>Have your team fill out their availability.</li>
+          <li>
+            Create an account by pressing the Get Started button in the nav bar.
+            <br />
+            <img src="{{ url_for('static', filename='media/get-started.png') }}" alt="Get Started" />
+          </li>
+          <li>
+            Create a meeting, and share it with your team.
+            <br />
+            <img src="{{ url_for('static', filename='media/create-meeting.png') }}" alt="Create Meeting" class="create-meeting-img" />
+          </li>
+          <li>
+            Have your team fill out their availability.
+            <br />
+            <img src="{{ url_for('static', filename='media/select-unavailability.png') }}" alt="Select Unavailability" class="select-unavailability-img" />
+          </li>
           <li>The website will figure out the best time.</li>
         </ol>
       </div>
