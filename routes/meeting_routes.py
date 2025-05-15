@@ -188,7 +188,6 @@ def init_meeting_routes(app, db):
         for entry in timeslot_entries:
             timeslot_id = entry.get("timeslot_id")
             timeslot = Timeslot.query.get(timeslot_id)
-            print(timeslot)
             if not timeslot:
                 return jsonify({"error": f"Timeslot with ID {timeslot_id} not found"}), 404
 
@@ -200,28 +199,9 @@ def init_meeting_routes(app, db):
 
         db.session.commit()
 
-        amount_timeslots_needed = meeting.meeting_length // 15
-
         timeslots = get_timeslots(meeting)
-        sorted_timeslots = sorted(timeslots, key=lambda x: x["order"])  # sort the timeslots by order
 
-        dict_order = {}
-
-        for i in range(len(sorted_timeslots)):
-            current_slot = sorted_timeslots[i]
-            total_unavailable = 0
-
-            for j in range(amount_timeslots_needed):
-                if (i + j) < len(sorted_timeslots):
-                    next_slot = sorted_timeslots[i + j]
-
-                    total_unavailable += len(next_slot["unavailable_users"])
-                else:
-                    break
-
-            # Save the total sum into dict_order
-            dict_order[current_slot["order"]] = total_unavailable
-
+        dict_order = get_num_unavailable_per_timeslot(timeslots, meeting.meeting_length)
         best_order = min(
             dict_order, key=lambda k: dict_order[k]
         )  # get the order with the least amount of unavailable users in its window
