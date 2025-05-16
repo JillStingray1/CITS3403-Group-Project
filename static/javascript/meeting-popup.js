@@ -1,5 +1,5 @@
 /**
- * 
+ * Hides the popup if the close button is clicked
  */
 function hide_popup() {
     document.getElementById("popup").style.display = "none";
