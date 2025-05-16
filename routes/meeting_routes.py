@@ -115,6 +115,29 @@ def init_meeting_routes(app, db):
                 for m in current_activities
             ],
         )
+    
+    @app.route("/meetings", methods=["GET"])
+    @secure
+    def get_all_meetings():
+        """
+        Get all meetings for the current user. Returns JSON with meeting details.
+        """
+        user = User.query.get(session["user_id"])
+        meetings = Meeting.query.join(association_table).filter(association_table.c.user_id == user.id).all()
+        meeting_list = [
+            {
+                "id": meeting.id,
+                "start_date": meeting.start_date.strftime("%Y-%m-%d"),
+                "end_date": meeting.end_date.strftime("%Y-%m-%d"),
+                "name": meeting.meeting_name,
+                "meeting_length": meeting.meeting_length,
+                "best_timeslot": meeting.best_timeslot,
+            
+                
+            }
+            for meeting in meetings
+        ]
+        return jsonify(meeting_list), 200
 
     @app.route("/meeting/code/<share_code>", methods=["GET"])
     @secure
