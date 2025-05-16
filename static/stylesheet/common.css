@@ -32,6 +32,11 @@
   background-color: #E6785F;
 }
 
+/* General warning lable for forms */
+.warning {
+  color: red !important;
+}
+
 /* Reset & box‑sizing */
 *, *::before, *::after {
     box-sizing: border-box;
@@ -74,4 +79,5 @@
     max-width: 1200px;
     margin: 0 auto;
   }
-  
+
+
