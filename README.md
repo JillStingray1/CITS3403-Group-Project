@@ -151,7 +151,7 @@ Visit `http://localhost:5000/` to see the landing page.
 
 To run unit tests, follow the instructions above to install dependencies, and then run the following command.
 ```bash
-python -m unitest
+python -m unittest
 ```
 
 For Selenium testing, the Process constructor used to spawn the webserver doesn't work properly on windows, and will crash with `OSError: \[WinError 6\] The handle is invalid`.
