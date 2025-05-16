@@ -18,9 +18,10 @@ function getBestTimeFromSlot(order, start) {
     return dt;
 }
 
+/**
+ * Displays the chart using Chart.js
+ */
 window.onload = () => {
-    console.log(top_scores)
-    console.log(start_date)
     let date_lables = [];
     let unavaliability_scores = [];
     for (let i = 0; i < top_scores.length; i++) {
@@ -37,7 +38,8 @@ window.onload = () => {
             datasets: [{
                 label: 'Unavaliability score',
                 data: unavaliability_scores,
-                borderWidth: 1
+                borderWidth: 1,
+                backgroundColor: '#FFB1C1',
             }]
         },
         options: {
