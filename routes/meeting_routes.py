@@ -71,8 +71,7 @@ def init_meeting_routes(app, db):
 
             session["meeting_id"] = new_meeting.id
 
-            return redirect("/availability-selection/" + str(new_meeting.id))
-              # redirect to the date selection page after creating the meeting
+            return redirect(url_for("main_menu"))  # redirect to the date selection page after creating the meeting
         else:
             # If the form is not valid, render the form again with errors
             return render_template("activity-create.html", form=form)
@@ -106,38 +105,8 @@ def init_meeting_routes(app, db):
             db.session.commit()
             return redirect(url_for("main_menu"))
         return render_template(
-            "main-menu.html",
-            created_activities=current_activities,
-            past_activities=past_activities,
-            form=form,
-            activities=[
-                {"name": m[1].meeting_name, "due": m[1].end_date.strftime("%Y-%m-%d")}
-                for m in current_activities
-            ],
+            "main-menu.html", created_activities=current_activities, past_activities=past_activities, form=form
         )
-    
-    @app.route("/meetings", methods=["GET"])
-    @secure
-    def get_all_meetings():
-        """
-        Get all meetings for the current user. Returns JSON with meeting details.
-        """
-        user = User.query.get(session["user_id"])
-        meetings = Meeting.query.join(association_table).filter(association_table.c.user_id == user.id).all()
-        meeting_list = [
-            {
-                "id": meeting.id,
-                "start_date": meeting.start_date.strftime("%Y-%m-%d"),
-                "end_date": meeting.end_date.strftime("%Y-%m-%d"),
-                "name": meeting.meeting_name,
-                "meeting_length": meeting.meeting_length,
-                "best_timeslot": meeting.best_timeslot,
-            
-                
-            }
-            for meeting in meetings
-        ]
-        return jsonify(meeting_list), 200
 
     @app.route("/meeting/code/<share_code>", methods=["GET"])
     @secure
