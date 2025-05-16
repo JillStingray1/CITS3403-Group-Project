@@ -22,8 +22,6 @@ function getBestTimeFromSlot(order, start) {
  * Displays the chart using Chart.js
  */
 window.onload = () => {
-    console.log(top_scores)
-    console.log(start_date)
     let date_lables = [];
     let unavaliability_scores = [];
     for (let i = 0; i < top_scores.length; i++) {
