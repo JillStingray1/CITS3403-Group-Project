@@ -106,6 +106,13 @@
   line-height: 1.5; /* Optional: Adjust line height for better readability */
 }
 
+.discription-body p {
+  margin-left: 20%;
+  margin-right: 20%;
+  font-size: 1.2rem; /* Increase the font size (adjust as needed) */
+  line-height: 1.5; /* Optional: Adjust line height for better readability */
+}
+
 @media (max-width: 768px) {
   .landing-container {
     flex-direction: column;
