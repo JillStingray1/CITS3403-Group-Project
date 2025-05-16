@@ -1,4 +1,4 @@
-from tools import get_best_time_from_slot, format_meetings
+from tools.tools import get_best_time_from_slot, format_meetings
 from datetime import date, datetime
 from models.Meeting import Meeting
 import unittest

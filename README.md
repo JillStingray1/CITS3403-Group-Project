@@ -89,7 +89,10 @@ Meeting Manager helps organisers create meetings over a date range, invite parti
 │   ├── activity-create.html
 │   ├── analysis.html     
 │   └── …                 
-├── tools.py              # Business-logic helpers (best-slot computation)
+├── tools
+│   ├── tools.py          # Business-logic helpers (eg. best-slot computation)
+│   ├── config.py         # Stores various app configurations
+│   └── extensions.py     # Initializes the database before creation
 ├── middleware/           # @secure decorator for login-required
 ├── migrations/           # Alembic DB migrations
 ├── test/                 # pytest test modules
@@ -142,12 +145,6 @@ Meeting Manager helps organisers create meetings over a date range, invite parti
    SQLALCHEMY_DATABASE_URI="sqlite:///app.db"
    ```
 
-3. **Initialize the database**
-
-   ```bash
-   flask db upgrade
-   ```
-
 ---
 
 ## Running the App
@@ -162,12 +159,12 @@ Visit `http://localhost:5000/` to see the landing page.
 
 ---
 
-## Key Flows
+## Key Routes
 
-1. **User Signup & Login** (`/signup`, `/login`)
+1. **User Signup & Login** (`/user/signup`, `/user/login`)
 2. **Create Meeting** (`/meeting/create`)
-3. **Join & Mark Availability**: Client JS POSTs to `/meeting/timeslot`
-4. **Stats Dashboard**: GET `/analysis` renders `analysis.html`; front‑end fetches `/meeting/stats` or `/meeting/timeslot` for raw slot data
+3. **Join & Mark Availability**: Uses JS on `/avaiability-selection/<meeting_id>` to POST to `/meeting/timeslot`
+4. **Stats Dashboard**: `/analysis` Renders a bar graph of best times
 
 ---
 
@@ -178,7 +175,11 @@ To run unit tests, run the following command.
 python -m unitest
 ```
 
-Ensure `.env` is configured (you can use an in‑memory SQLite URI for tests).
+For Selenium testing, the Process constructor used to spawn the webserver doesn't work properly on windows, and will crash with `OSError: \[WinError 6\] The handle is invalid`
+
+Please make sure you are running on Linux, with a Firefox binary installed, and not as a flatpak/snap. If you are on Ubuntu, where `apt` will automatically install Firefox as a snap, see [these instructions](https://askubuntu.com/questions/1399383/how-to-install-firefox-as-a-traditional-deb-package-without-snap-in-ubuntu-22).
+
+
 
 ## References
 Main menu video obtained from https://www.pexels.com/video/man-people-woman-desk-7687999/
