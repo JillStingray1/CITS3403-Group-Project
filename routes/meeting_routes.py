@@ -158,7 +158,6 @@ def init_meeting_routes(app, db):
         unavalibility_scores_list = list(get_num_unavailable_per_timeslot(timeslots, meeting.meeting_length).items())
         unavalibility_scores_list.sort(key=lambda x: x[1])
         top_scores = unavalibility_scores_list[:10]
-        print(top_scores)
 
         if not meeting:
             flash("Please create or select a meeting first.", "warning")

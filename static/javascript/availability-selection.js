@@ -118,6 +118,9 @@ fetch(`/meeting`, {
     renderTimeslots(firstpage, username);
 
     prevpage.disabled = true;
+    if (maxpages == 1) {
+        nextpage.disabled = true
+    }
     nextpage.addEventListener("click", () => {
 
         page++;
