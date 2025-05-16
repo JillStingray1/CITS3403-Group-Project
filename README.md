@@ -13,17 +13,6 @@
   |24091054|Choo Yan Ling|Dragonicle|
   |23717085|Tylen Chetty|TDC350
 
-## Table of Contents
-
-* [Purpose](#purpose)
-* [Tech Stack](#tech-stack)
-* [Directory Structure](#directory-structure)
-* [Installation](#installation)
-* [Configuration](#configuration)
-* [Running the App](#running-the-app)
-* [Key Flows](#key-flows)
-* [Testing](#testing)
----
 
 ## Purpose
 
@@ -91,7 +80,6 @@ The `/analysis/<meeting_id>` calculates the top 10 best times, instead of just t
 ├── test/                 # pytest test modules
 └── requirements.txt      # project dependencies
 ```
-### Key Routes
 
 
 
