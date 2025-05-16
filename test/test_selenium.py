@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.common.action_chains import ActionChains
 from flask import render_template
 import unittest
 from app import create_app
@@ -91,6 +92,81 @@ class DatabaseTest(unittest.TestCase):
         self.driver.find_element(value="logout").click()
         self.driver.find_element(value="login").click()
         self.assertEqual(self.driver.current_url, local_host + "user/login")
+
+    def test_meeting(self):
+        """
+        Creates a test meeting.
+        """
+        # login
+        self.driver.find_element(value="signup").click()
+        username_field = self.driver.find_element(value="username")
+        password_field = self.driver.find_element(value="password")
+        confirm_field = self.driver.find_element(value="confirmPassword")
+        username_field.send_keys("Joel3")
+        password_field.send_keys("Apple")
+        confirm_field.send_keys("Apple")
+        self.driver.find_element(value="submit").click()
+
+        # navigate to the creation page
+        self.driver.find_element(value="create_activity").click()
+        self.driver.find_element(value="meeting_name").send_keys("Meeting")
+        self.driver.find_element(value="meeting_description").send_keys("Meeting")
+        self.driver.find_element(value="start_date").send_keys("3000-05-16")
+        self.driver.find_element(value="end_date").send_keys("3000-05-16")
+        self.driver.find_element(value="meeting_length").send_keys("60")
+        self.driver.find_element(value="submit").click()
+
+        # find the meeting name on the main menu
+        meeting_name = self.driver.find_element(value="meeting_name").get_attribute("textContent")
+        self.assertEqual(meeting_name, "Meeting")
+
+    def test_sharing(self):
+        # login
+        self.driver.find_element(value="signup").click()
+        username_field = self.driver.find_element(value="username")
+        password_field = self.driver.find_element(value="password")
+        confirm_field = self.driver.find_element(value="confirmPassword")
+        username_field.send_keys("Joel3")
+        password_field.send_keys("Apple")
+        confirm_field.send_keys("Apple")
+        self.driver.find_element(value="submit").click()
+
+        # make a meeting
+        self.driver.find_element(value="create_activity").click()
+        self.driver.find_element(value="meeting_name").send_keys("Meeting")
+        self.driver.find_element(value="meeting_description").send_keys("Meeting")
+        self.driver.find_element(value="start_date").send_keys("3000-05-16")
+        self.driver.find_element(value="end_date").send_keys("3000-05-16")
+        self.driver.find_element(value="meeting_length").send_keys("60")
+        self.driver.find_element(value="submit").click()
+
+        # get the share code
+        code = self.driver.find_element(value="share_code").get_attribute("textContent")
+        self.assertIsNotNone(code)
+
+        # logout
+        self.driver.find_element(value="logout").click()
+
+        # make a second account
+        self.driver.find_element(value="signup").click()
+        username_field = self.driver.find_element(value="username")
+        password_field = self.driver.find_element(value="password")
+        confirm_field = self.driver.find_element(value="confirmPassword")
+        username_field.send_keys("Joel4")
+        password_field.send_keys("Apple")
+        confirm_field.send_keys("Apple")
+        self.driver.find_element(value="submit").click()
+
+        # add the meeting via sharecode dropdown
+        hover = ActionChains(self.driver)
+        hover.move_to_element(self.driver.find_element(value="share_dropdown")).perform()
+        self.driver.find_element(value="code").send_keys(code)  # type: ignore
+        self.driver.find_element(value="show-details").click()
+        self.driver.find_element(value="submit").click()
+
+        # find the meeting name on the main menu
+        meeting_name = self.driver.find_element(value="meeting_name").get_attribute("textContent")
+        self.assertEqual(meeting_name, "Meeting")
 
     def tearDown(self) -> None:
         self.server_thread.terminate()
