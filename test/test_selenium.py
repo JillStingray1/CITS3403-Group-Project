@@ -36,7 +36,7 @@ class DatabaseTest(unittest.TestCase):
     def test_signup(self):
         """
         Attempts to sign in with a new account, and checks success on whether
-        we reach the main menu!
+        we reach the main menu
         """
         # find the sign up button on the index page and click
         self.driver.find_element(value="signup").click()
@@ -54,6 +54,43 @@ class DatabaseTest(unittest.TestCase):
 
         # check if we get to the main menu
         self.assertEqual(self.driver.current_url, local_host + "main-menu")
+
+    def test_auto_login(self):
+        """
+        Tests the functionality of automatically logging users that
+        are not logged out
+        """
+        # sign up to make user session
+        self.driver.find_element(value="signup").click()
+        username_field = self.driver.find_element(value="username")
+        password_field = self.driver.find_element(value="password")
+        confirm_field = self.driver.find_element(value="confirmPassword")
+        username_field.send_keys("Joel3")
+        password_field.send_keys("Apple")
+        confirm_field.send_keys("Apple")
+        self.driver.find_element(value="submit").click()
+
+        self.driver.get(local_host)
+        self.driver.find_element(value="login").click()
+        self.assertEqual(self.driver.current_url, local_host + "main-menu")
+
+    def test_logout(self):
+        """
+        Tests logging out, auto login should be disabled if you press log
+        out on the main menu
+        """
+        # sign up to make user session
+        self.driver.find_element(value="signup").click()
+        username_field = self.driver.find_element(value="username")
+        password_field = self.driver.find_element(value="password")
+        confirm_field = self.driver.find_element(value="confirmPassword")
+        username_field.send_keys("Joel3")
+        password_field.send_keys("Apple")
+        confirm_field.send_keys("Apple")
+        self.driver.find_element(value="submit").click()
+        self.driver.find_element(value="logout").click()
+        self.driver.find_element(value="login").click()
+        self.assertEqual(self.driver.current_url, local_host + "user/login")
 
     def tearDown(self) -> None:
         self.server_thread.terminate()
