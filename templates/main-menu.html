@@ -17,7 +17,7 @@
     </div>
     <div class="navbar-right">
       <div class="share-dropdown">
-        <button class="btn btn-primary dropdown-trigger">Use Share Code</button>
+        <button class="btn btn-primary dropdown-trigger" id="share_dropdown">Use Share Code</button>
         <div class="share-menu">
           <div class="share-menu-header">
             <span>Have a code?</span>
@@ -40,8 +40,8 @@
           </form>
         </div>
       </div>
-      <a href="{{ url_for('create_meeting') }}" class="button button-orange">+ New Activity</a>
-      <a href="{{ url_for('logout_user') }}" class="button button-orange">Logout</a>
+      <a href="{{ url_for('create_meeting') }}" class="button button-orange" id="create_activity">+ New Activity</a>
+      <a href="{{ url_for('logout_user') }}" class="button button-orange" id="logout">Logout</a>
     </div>
   </nav>
 
@@ -69,7 +69,7 @@
           <tbody>
             {% for activity in created_activities %}
               <tr>
-                <td><a href="{{ url_for('availability_selection', meeting_id=activity[1].id) }}">{{ activity[1].meeting_name }}</a></td>
+                <td id="meeting_name"><a href="{{ url_for('availability_selection', meeting_id=activity[1].id) }}">{{ activity[1].meeting_name }}</a></td>
                 <td>{{ activity[1].end_date.strftime('%d %B %Y') }}</td>
                 <td><a href="{{ url_for('analysis_page', meeting_id=activity[1].id) }}">{{ activity[0].strftime("%d %B %H:%M") }}</a></td>
                 <td>
@@ -78,7 +78,7 @@
                   {% endif %}
                   {{ activity[1].meeting_length % 60}} min
                 </td>
-                <td>{{ activity[1].share_code }}</td>
+                <td id="share_code">{{ activity[1].share_code }}</td>
               </tr>
             {% else %}
               <tr>

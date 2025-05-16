@@ -1,6 +1,6 @@
 from sqlalchemy import Integer, String, ForeignKey, Date
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
-from extensions import db
+from tools.extensions import db
 from models.Association import association_table
 from models.User_timeslot import User_timeslot_association
 
@@ -23,7 +23,6 @@ class Timeslot(db.Model):
 
     # Foreign key to the associated meeting
     meeting_id: Mapped[int] = mapped_column(ForeignKey("meeting.id"), nullable=False)
-
 
 
 class Meeting(db.Model):
@@ -77,5 +76,3 @@ class Meeting(db.Model):
         if value  %15 != 0 or value > 300:
             raise ValueError(f"meeting_length must be divisible by 15 and below 5 hours") 
         return value
-
-

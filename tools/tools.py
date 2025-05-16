@@ -13,6 +13,9 @@ def validate_password(password: str) -> bool:
     """
     Checks if a inputted username is valid. Passwords should only contain all
     alphanumeric characters, and special characters !#+:=.?
+
+    this function is used to test the regex used in form validators, should not be
+    used elsewhere
     Args:
         password (string): the password sent to the srever
 
@@ -32,6 +35,9 @@ def validate_username(username: str) -> bool:
     Checks if a inputted username is valid. Username should only contain
     alphanumeric characters (excluding decimals) and underscores, and must be
     at least 3 characters long.
+
+    this function is used to test the regex used in form validators, should not be
+    used elsewhere
 
     Args:
         username (string): the username set to the server

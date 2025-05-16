@@ -1,6 +1,6 @@
 from flask import session, request, jsonify, redirect, url_for, render_template, flash
 from models import User, Meeting, Timeslot
-from tools import (
+from tools.tools import (
     generate_share_code,
     format_meetings,
     get_num_unavailable_per_timeslot,
@@ -71,9 +71,7 @@ def init_meeting_routes(app, db):
 
             session["meeting_id"] = new_meeting.id
 
-            return redirect(
-                url_for("availability_selection")
-            )  # redirect to the date selection page after creating the meeting
+            return redirect(url_for("main_menu"))  # redirect to the date selection page after creating the meeting
         else:
             # If the form is not valid, render the form again with errors
             return render_template("activity-create.html", form=form)
