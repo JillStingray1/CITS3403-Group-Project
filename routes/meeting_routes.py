@@ -107,7 +107,14 @@ def init_meeting_routes(app, db):
             db.session.commit()
             return redirect(url_for("main_menu"))
         return render_template(
-            "main-menu.html", created_activities=current_activities, past_activities=past_activities, form=form
+            "main-menu.html",
+            created_activities=current_activities,
+            past_activities=past_activities,
+            form=form,
+            activities=[
+                {"name": m[1].meeting_name, "due": m[1].end_date.strftime("%Y-%m-%d")}
+                for m in current_activities
+            ],
         )
 
     @app.route("/meeting/code/<share_code>", methods=["GET"])

@@ -5,7 +5,7 @@
   <title>Main Menu</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/common.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/mainmenu.css') }}">
-  <script src="{{ url_for('static', filename='javascript/meeting-popup.js') }}"></script>
+  <script src="{{ url_for('static', filename='javascript/meeting-popup.js') }}" defer></script>
 </head>
 <body class="main-background">
 
@@ -126,7 +126,32 @@
         </table>
       </div>
     </section>
+
+    <section class="calendar-section">
+      <h2>Calendar</h2>
+      <div class="card calendar-card">
+        <!-- month navigation -->
+        <div class="calendar-header">
+          <button class="calendar-nav-btn" id="prev-month">&lt;</button>
+          <div class="calendar-title" id="calendar-title"></div>
+          <button class="calendar-nav-btn" id="next-month">&gt;</button>
+        </div>
+        <!-- weekday labels -->
+        <div class="calendar-weekdays">
+          <div>Sun</div><div>Mon</div><div>Tue</div>
+          <div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+        </div>
+        <!-- days grid -->
+        <div class="calendar-days" id="calendar-days"></div>
+      </div>
+    </section>
+    
   </main>
+  <script src="{{ url_for('static', filename='javascript/calendar.js') }}" defer></script>
+  
+  <script>
+  window.activities = {{ activities|tojson }};
+  </script>
 
 </body>
 </html>
