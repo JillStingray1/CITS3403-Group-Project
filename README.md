@@ -124,26 +124,22 @@ The `/analysis/<meeting_id>` calculates the top 10 best times, instead of just t
    pip install -r requirements.txt
    ```
 
-1. **Copy the example env file**
+4. **Copy the example env file**
 
    ```bash
    cp .env.example .env
    ```
 
-2. **Edit `.env`** and set:
+5. **Edit `.env`** and set:
 
    ```ini
    SECRET_KEY="your_secret_key_here"
    SQLALCHEMY_DATABASE_URI="sqlite:///app.db"
    ```
-
-
-
-```bash
-export FLASK_APP=app.py    # or set on Windows
-export FLASK_ENV=development
-flask run                 # listens on http://localhost:5000
-```
+6. Run the app
+   ```bash
+   flask run                 # listens on http://localhost:5000
+   ```
 
 Visit `http://localhost:5000/` to see the landing page.
 
